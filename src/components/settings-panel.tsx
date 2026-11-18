@@ -6,6 +6,7 @@ import { useProgress } from "@/lib/progress-store";
 import type { ReactNode } from "react";
 import {
   ARABIC_SCALES,
+  type Density,
   FONT_SCALES,
   nearestScaleIndex,
   type Theme,
@@ -17,6 +18,12 @@ const themeOptions: { value: Theme; label: string }[] = [
   { value: "system", label: "Otomatis" },
   { value: "light", label: "Terang" },
   { value: "dark", label: "Gelap" },
+];
+
+const densityOptions: { value: Density; label: string }[] = [
+  { value: "compact", label: "Rapat" },
+  { value: "comfortable", label: "Nyaman" },
+  { value: "loose", label: "Lega" },
 ];
 
 const Toggle = ({
@@ -133,6 +140,33 @@ export const SettingsPanel = () => {
             onChange={settings.setFontScale}
           />
         </div>
+      </section>
+
+      <section>
+        <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-muted">
+          Kerapatan tampilan
+        </h2>
+        <div className="grid grid-cols-3 gap-2 rounded-2xl border border-border bg-surface p-1.5">
+          {densityOptions.map((option) => (
+            <button
+              key={option.value}
+              type="button"
+              onClick={() => settings.setDensity(option.value)}
+              aria-pressed={settings.density === option.value}
+              className={`min-h-12 rounded-xl font-semibold ${
+                settings.density === option.value
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted"
+              }`}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+        <p className="mt-2 px-1 text-sm text-muted">
+          Atur jarak dan ukuran tombol. Pilih &ldquo;Rapat&rdquo; agar bacaan lebih banyak
+          terlihat saat huruf besar.
+        </p>
       </section>
 
       <section>

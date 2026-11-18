@@ -272,8 +272,8 @@ export const CounterTapButton = ({
       type="button"
       onClick={handleTap}
       disabled={locked}
-      className={`flex w-full flex-col items-center justify-center rounded-3xl px-4 py-3 text-center shadow-lg transition-[transform,background-color] active:scale-[0.98] ${
-        large ? "min-h-[38dvh]" : "min-h-24"
+      className={`flex w-full flex-col items-center justify-center rounded-2xl px-4 text-center shadow-lg transition-[transform,background-color] active:scale-[0.98] ${
+        large ? "min-h-[38dvh] rounded-3xl py-3" : "min-h-16 py-2"
       } ${
         locked
           ? "bg-primary-soft text-primary-strong"
@@ -281,15 +281,15 @@ export const CounterTapButton = ({
       }`}
     >
       {locked ? (
-        <span className={`flex items-center gap-2 font-bold ${large ? "text-3xl" : "text-xl"}`}>
-          <CheckIcon className={large ? "size-8" : "size-6"} /> Tercatat
+        <span className={`flex items-center gap-2 font-bold ${large ? "text-3xl" : "text-lg"}`}>
+          <CheckIcon className={large ? "size-8" : "size-5"} /> Tercatat
         </span>
       ) : (
         <>
-          <span className={`font-extrabold ${large ? "text-3xl" : "text-xl"}`}>
+          <span className={`font-extrabold leading-tight ${large ? "text-3xl" : "text-lg"}`}>
             Selesai {counter.unit} ke-{count + 1}
           </span>
-          <span className={`mt-1 font-medium opacity-90 ${large ? "text-lg" : "text-sm"}`}>
+          <span className={`font-medium opacity-90 ${large ? "mt-1 text-lg" : "text-xs"}`}>
             Tekan saat: {counter.tapLabel}
           </span>
         </>

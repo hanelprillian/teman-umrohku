@@ -56,6 +56,17 @@
   --font-arabic: var(--font-scheherazade);
 }
 
+/*
+ * Tailwind sizes padding/gap/min-height from --spacing (in rem, which already includes
+ * --font-scale). Let spacing grow only half as fast as text, then apply the density setting,
+ * so large text doesn't balloon every button and gap.
+ */
+:root {
+  --spacing: calc(
+    0.25rem * var(--density, 1) * (0.5 + var(--font-scale, 1) / 2) / var(--font-scale, 1)
+  );
+}
+
 html {
   background: var(--background);
   color: var(--foreground);

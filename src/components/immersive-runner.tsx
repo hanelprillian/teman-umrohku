@@ -285,7 +285,7 @@ export const ImmersiveRunner = ({ session }: { session: Session }) => {
               <div
                 className={`mx-auto flex min-h-full max-w-xl flex-col px-5 ${
                   step.counter && slide.dua ? "pt-20" : "pt-5"
-                } ${counterPending ? "pb-44" : "pb-safe"}`}
+                } ${counterPending ? "pb-36" : "pb-safe"}`}
               >
                 {slide.dua ? (
                   <DuaSlideContent slide={{ ...slide, dua: slide.dua }} />

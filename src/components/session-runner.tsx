@@ -151,7 +151,7 @@ const StandardRunner = ({ session }: { session: Session }) => {
     <div className="min-h-dvh">
       <SessionHeader session={session} stepIndex={stepIndex} />
 
-      <main className="mx-auto max-w-xl space-y-6 px-4 pb-48 pt-5">
+      <main className="mx-auto max-w-xl space-y-6 px-4 pb-40 pt-5">
         <div>
           {step.counter && !counterDone && stepIndex > 0 && (
             <ActionButton
