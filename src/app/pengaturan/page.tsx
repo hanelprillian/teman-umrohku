@@ -1,0 +1,24 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { ArrowLeftIcon } from "@/components/icons";
+import { SettingsPanel } from "@/components/settings-panel";
+
+export const metadata: Metadata = { title: "Pengaturan · Panduan Umroh" };
+
+export default function SettingsPage() {
+  return (
+    <main className="pt-safe pb-safe mx-auto max-w-xl px-4 pb-10">
+      <header className="flex items-center gap-3 py-4">
+        <Link
+          href="/"
+          aria-label="Kembali ke beranda"
+          className="-ml-2 flex size-11 items-center justify-center rounded-full active:bg-surface-muted"
+        >
+          <ArrowLeftIcon className="size-6" />
+        </Link>
+        <h1 className="text-2xl font-extrabold">Pengaturan</h1>
+      </header>
+      <SettingsPanel />
+    </main>
+  );
+}

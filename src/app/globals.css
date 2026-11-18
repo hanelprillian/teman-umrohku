@@ -1,0 +1,127 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+:root {
+  --background: #faf7f0;
+  --surface: #ffffff;
+  --surface-muted: #f2ede1;
+  --foreground: #1c1917;
+  --muted: #6b645a;
+  --border: #e5ddcc;
+  --primary: #0f6b5e;
+  --primary-strong: #0b5248;
+  --primary-soft: #dcefe9;
+  --primary-foreground: #ffffff;
+  --accent: #a16207;
+  --accent-soft: #fdf3dc;
+  --danger-soft: #fdecec;
+  --danger: #b42318;
+  --font-scale: 1;
+}
+
+[data-theme="dark"] {
+  --background: #0b1311;
+  --surface: #121d1a;
+  --surface-muted: #18251f;
+  --foreground: #ecebe6;
+  --muted: #a3a89f;
+  --border: #23332d;
+  --primary: #34c3a8;
+  --primary-strong: #5fd6bf;
+  --primary-soft: #143029;
+  --primary-foreground: #04110e;
+  --accent: #f1b84b;
+  --accent-soft: #2b2311;
+  --danger-soft: #2f1615;
+  --danger: #f4877e;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-primary-strong: var(--primary-strong);
+  --color-primary-soft: var(--primary-soft);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --font-sans: var(--font-jakarta);
+  --font-arabic: var(--font-scheherazade);
+}
+
+html {
+  background: var(--background);
+  color: var(--foreground);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  -webkit-tap-highlight-color: transparent;
+  font-size: calc(1rem * var(--font-scale));
+}
+
+button,
+a {
+  touch-action: manipulation;
+}
+
+.text-arabic {
+  font-family: var(--font-arabic);
+  font-size: calc(1.875rem * var(--font-scale));
+  line-height: 2.15;
+}
+
+.text-reading {
+  font-size: calc(1.0625rem * var(--font-scale));
+  line-height: 1.65;
+}
+
+html[data-hide-latin] .latin-text,
+html[data-hide-translation] .translation-text {
+  display: none;
+}
+
+.pb-safe {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}
+
+.pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+
+details > summary {
+  list-style: none;
+}
+
+details > summary::-webkit-details-marker {
+  display: none;
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.12);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-pop {
+  animation: pop 320ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-pop {
+    animation: none;
+  }
+}
