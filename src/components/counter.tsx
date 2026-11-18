@@ -92,6 +92,64 @@ export const CounterPanel = ({ counter, count, onUndo }: CounterPanelProps) => {
   );
 };
 
+interface CounterStripProps {
+  counter: Counter;
+  count: number;
+  visible: boolean;
+  onSelect: () => void;
+}
+
+export const CounterStrip = ({ counter, count, visible, onSelect }: CounterStripProps) => {
+  const done = count >= counter.total;
+  const current = counter.rounds[Math.min(count, counter.total - 1)];
+
+  return (
+    <div
+      aria-hidden={!visible}
+      className={`fixed inset-x-0 z-20 transition-[opacity,transform] duration-200 ${
+        visible
+          ? "translate-y-0 opacity-100"
+          : "pointer-events-none -translate-y-2 opacity-0"
+      }`}
+      style={{ top: "var(--header-h, 0px)" }}
+    >
+      <button
+        type="button"
+        tabIndex={visible ? 0 : -1}
+        onClick={onSelect}
+        className="mx-auto flex w-full max-w-xl items-center gap-3 border-b border-border bg-surface/95 px-4 py-2.5 text-left shadow-sm backdrop-blur"
+      >
+        <span className="text-2xl font-extrabold tabular-nums text-primary">
+          {count}
+          <span className="text-base font-bold text-muted">/{counter.total}</span>
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block truncate text-sm font-bold">
+            {done ? `${counter.total} ${counter.unit} selesai` : current.label}
+          </span>
+          {!done && current.hint && (
+            <span className="block truncate text-xs text-muted">{current.hint}</span>
+          )}
+        </span>
+        <span className="flex gap-1" aria-hidden>
+          {counter.rounds.map((round, index) => (
+            <span
+              key={`${round.label}-${index}`}
+              className={`size-2.5 rounded-full ${
+                index < count
+                  ? "bg-primary"
+                  : index === count
+                    ? "border-2 border-primary"
+                    : "bg-border"
+              }`}
+            />
+          ))}
+        </span>
+      </button>
+    </div>
+  );
+};
+
 interface CounterTapButtonProps {
   counter: Counter;
   count: number;

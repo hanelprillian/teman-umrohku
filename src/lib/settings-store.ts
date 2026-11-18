@@ -11,10 +11,12 @@ interface SettingsState {
   fontScale: number;
   showLatin: boolean;
   showTranslation: boolean;
+  immersive: boolean;
   setTheme: (theme: Theme) => void;
   setFontScale: (fontScale: number) => void;
   setShowLatin: (showLatin: boolean) => void;
   setShowTranslation: (showTranslation: boolean) => void;
+  setImmersive: (immersive: boolean) => void;
 }
 
 export const useSettings = create<SettingsState>()(
@@ -24,10 +26,12 @@ export const useSettings = create<SettingsState>()(
       fontScale: 1,
       showLatin: true,
       showTranslation: true,
+      immersive: false,
       setTheme: (theme) => set({ theme }),
       setFontScale: (fontScale) => set({ fontScale }),
       setShowLatin: (showLatin) => set({ showLatin }),
       setShowTranslation: (showTranslation) => set({ showTranslation }),
+      setImmersive: (immersive) => set({ immersive }),
     }),
     { name: SETTINGS_STORAGE_KEY },
   ),

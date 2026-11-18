@@ -4,6 +4,8 @@ import type { SessionId } from "@/content/types";
 
 export interface SessionProgress {
   stepIndex: number;
+  /** Position within a step in immersive mode: 0 = instructions, n = n-th dua. */
+  slideIndex?: number;
   counts: Record<string, number>;
   completed: boolean;
 }
@@ -11,7 +13,7 @@ export interface SessionProgress {
 interface ProgressState {
   sessions: Partial<Record<SessionId, SessionProgress>>;
   lastSessionId?: SessionId;
-  setStep: (sessionId: SessionId, stepIndex: number) => void;
+  setStep: (sessionId: SessionId, stepIndex: number, slideIndex?: number) => void;
   setCount: (sessionId: SessionId, stepId: string, count: number) => void;
   completeSession: (sessionId: SessionId) => void;
   resetSession: (sessionId: SessionId) => void;
@@ -28,7 +30,7 @@ export const useProgress = create<ProgressState>()(
   persist(
     (set) => ({
       sessions: {},
-      setStep: (sessionId, stepIndex) =>
+      setStep: (sessionId, stepIndex, slideIndex = 0) =>
         set((state) => ({
           lastSessionId: sessionId,
           sessions: {
@@ -36,6 +38,7 @@ export const useProgress = create<ProgressState>()(
             [sessionId]: {
               ...(state.sessions[sessionId] ?? emptyProgress),
               stepIndex,
+              slideIndex,
             },
           },
         })),

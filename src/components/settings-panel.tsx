@@ -112,6 +112,37 @@ export const SettingsPanel = () => {
 
       <section>
         <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-muted">
+          Mode tampilan sesi
+        </h2>
+        <div className="grid grid-cols-2 gap-2 rounded-2xl border border-border bg-surface p-1.5">
+          {[
+            { value: false, label: "Standar" },
+            { value: true, label: "Imersif" },
+          ].map((option) => (
+            <button
+              key={option.label}
+              type="button"
+              onClick={() => settings.setImmersive(option.value)}
+              aria-pressed={settings.immersive === option.value}
+              className={`min-h-12 rounded-xl font-semibold ${
+                settings.immersive === option.value
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted"
+              }`}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+        <p className="mt-2 px-1 text-sm text-muted">
+          {settings.immersive
+            ? "Satu layar untuk setiap langkah dan setiap doa, fokus pada bacaan Arab dan artinya. Geser ke atas untuk lanjut."
+            : "Pindah langkah dengan tombol Lanjut di bagian bawah layar."}
+        </p>
+      </section>
+
+      <section>
+        <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-muted">
           Tema
         </h2>
         <div className="grid grid-cols-3 gap-2 rounded-2xl border border-border bg-surface p-1.5">

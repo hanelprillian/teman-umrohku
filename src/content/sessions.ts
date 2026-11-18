@@ -407,6 +407,8 @@ const sai: Session = {
       title: "Sa'i 7 Perjalanan",
       instructions: [
         "Turun dari Shafa dan berjalan menuju Marwah.",
+        "Sampai di lampu hijau pertama: pria berlari kecil hingga lampu hijau berikutnya, lalu berjalan biasa lagi. Wanita tetap berjalan biasa.",
+        "Di antara dua lampu hijau, boleh membaca \"Rabbighfir warḥam…\" seperti yang dibaca para sahabat.",
         "Tekan tombol besar setiap kali sampai di bukit tujuan.",
         "Setiap sampai di Shafa/Marwah: menghadap kiblat, baca dzikir yang sama, lalu berdoa (3 kali).",
         "Selama perjalanan, bebas berdzikir, berdoa, atau membaca Al-Qur'an.",
@@ -436,6 +438,10 @@ const sai: Session = {
           text: "Berjalan biasa sepanjang sa'i, termasuk di area lampu hijau.",
         },
         {
+          text: "Tidak ada doa khusus dari Nabi ﷺ saat masuk atau keluar area lampu hijau. Doa panjang khusus per putaran yang beredar di beberapa buku tidak ada dasarnya dari hadits.",
+          warning: true,
+        },
+        {
           text: "Dari Shafa ke Marwah dihitung 1, kembali ke Shafa dihitung 2, dan seterusnya. Sa'i berakhir di Marwah.",
         },
       ],
@@ -445,6 +451,13 @@ const sai: Session = {
           status: "shahih",
           quote:
             "…hingga ketika kedua kaki beliau menginjak dasar lembah, beliau berlari kecil. Ketika sudah naik, beliau berjalan hingga sampai di Marwah.",
+          note: "Dasar lembah itu kini ditandai dengan lampu hijau.",
+        },
+        {
+          source: "Atsar Ibnu Umar, riwayat Al-Baihaqi dalam As-Sunan Al-Kubra",
+          status: "atsar",
+          quote:
+            "Wanita tidak berlari kecil saat thawaf di Baitullah, tidak pula di antara Shafa dan Marwah.",
         },
       ],
     },

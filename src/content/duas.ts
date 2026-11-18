@@ -230,7 +230,7 @@ export const dzikirShafaMarwah: Dua = {
 
 export const rabbighfirWarham: Dua = {
   id: "rabbighfir-warham",
-  title: "Dzikir saat sa'i (opsional)",
+  title: "Di antara lampu hijau (opsional)",
   arabic: "رَبِّ اغْفِرْ وَارْحَمْ، إِنَّكَ أَنْتَ الْأَعَزُّ الْأَكْرَمُ",
   latin: "Rabbighfir warḥam, innaka antal-a'azzul-akram.",
   translation:
@@ -239,7 +239,7 @@ export const rabbighfirWarham: Dua = {
     {
       source: "Atsar Ibnu Mas'ud & Ibnu Umar, riwayat Ibnu Abi Syaibah",
       status: "atsar",
-      note: "Dibaca para sahabat saat sa'i. Sanadnya dinilai shahih oleh Syaikh Al-Albani. Boleh juga berdzikir/berdoa bebas.",
+      note: "Dibaca Ibnu Mas'ud dan Ibnu Umar saat melewati dasar lembah (kini area lampu hijau). Sanadnya dinilai shahih oleh Syaikh Al-Albani. Bukan dari Nabi ﷺ, jadi boleh juga berdzikir/berdoa bebas.",
     },
   ],
 };
