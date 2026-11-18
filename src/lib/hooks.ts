@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  type RefObject,
   useEffect,
   useLayoutEffect,
   useRef,
@@ -18,22 +17,21 @@ export const useHydrated = () =>
     () => false,
   );
 
-export const useHeaderHeightVar = (headerRef: RefObject<HTMLElement | null>) => {
+/** Mirrors `element`'s height into a CSS variable on <html> while it is mounted. */
+export const useHeightVar = (element: HTMLElement | null, name: `--${string}`) => {
   useLayoutEffect(() => {
-    const header = headerRef.current;
-    if (!header) return;
+    if (!element) return;
     const root = document.documentElement;
-    const update = () =>
-      root.style.setProperty("--header-h", `${header.offsetHeight}px`);
+    const update = () => root.style.setProperty(name, `${element.offsetHeight}px`);
 
     update();
     const observer = new ResizeObserver(update);
-    observer.observe(header);
+    observer.observe(element);
     return () => {
       observer.disconnect();
-      root.style.removeProperty("--header-h");
+      root.style.removeProperty(name);
     };
-  }, [headerRef]);
+  }, [element, name]);
 };
 
 /** Whether any part of `element` is visible below the sticky session header. */
@@ -62,7 +60,7 @@ const WHEEL_MIN_DELTA = 40;
 const WHEEL_IDLE_MS = 200;
 const PAGE_LOCK_MS = 450;
 
-const edges = (scroller: HTMLElement) => ({
+export const edges = (scroller: HTMLElement) => ({
   atTop: scroller.scrollTop <= 1,
   atBottom: scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 2,
 });
@@ -74,11 +72,13 @@ const edges = (scroller: HTMLElement) => ({
  */
 export const usePagedSwipe = ({
   stage,
+  enabled = true,
   getScroller,
   onNext,
   onPrev,
 }: {
   stage: HTMLElement | null;
+  enabled?: boolean;
   getScroller: () => HTMLElement | null | undefined;
   onNext: () => void;
   onPrev: () => void;
@@ -90,7 +90,7 @@ export const usePagedSwipe = ({
   });
 
   useEffect(() => {
-    if (!stage) return;
+    if (!stage || !enabled) return;
 
     let lockedUntil = 0;
     const page = (direction: "next" | "prev") => {
@@ -167,7 +167,7 @@ export const usePagedSwipe = ({
       stage.removeEventListener("wheel", onWheel);
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [stage]);
+  }, [stage, enabled]);
 };
 
 export const useNow = (intervalMs: number) => {

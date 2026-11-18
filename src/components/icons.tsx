@@ -26,6 +26,32 @@ export const ArrowRightIcon = (props: IconProps) => (
   </svg>
 );
 
+export const ChevronUpIcon = (props: IconProps) => (
+  <svg {...base} {...props}>
+    <path d="m18 15-6-6-6 6" />
+  </svg>
+);
+
+export const ChevronDownIcon = (props: IconProps) => (
+  <svg {...base} {...props}>
+    <path d="m6 9 6 6 6-6" />
+  </svg>
+);
+
+export const LockIcon = (props: IconProps) => (
+  <svg {...base} {...props}>
+    <rect x="4" y="11" width="16" height="10" rx="2" />
+    <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+  </svg>
+);
+
+export const UnlockIcon = (props: IconProps) => (
+  <svg {...base} {...props}>
+    <rect x="4" y="11" width="16" height="10" rx="2" />
+    <path d="M8 11V7a4 4 0 0 1 7.75-1.4" />
+  </svg>
+);
+
 export const CheckIcon = (props: IconProps) => (
   <svg {...base} {...props}>
     <path d="M20 6 9 17l-5-5" />

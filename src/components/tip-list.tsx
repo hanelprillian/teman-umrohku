@@ -11,6 +11,7 @@ export const TipList = ({ tips }: { tips: Tip[] }) => (
     {tips.map((tip) => (
       <li
         key={tip.text}
+        data-audience={tip.audience}
         className={`flex gap-3 rounded-xl px-4 py-3 text-reading ${
           tip.warning
             ? "bg-accent-soft text-foreground"
@@ -22,7 +23,7 @@ export const TipList = ({ tips }: { tips: Tip[] }) => (
         )}
         <div>
           {tip.audience && (
-            <span className="mr-2 inline-block rounded-md bg-primary px-1.5 py-0.5 align-[2px] text-xs font-bold uppercase tracking-wide text-primary-foreground">
+            <span className="audience-prefix mr-2 inline-block rounded-md bg-primary px-1.5 py-0.5 align-[2px] text-xs font-bold uppercase tracking-wide text-primary-foreground">
               {audienceLabel[tip.audience]}
             </span>
           )}

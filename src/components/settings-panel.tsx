@@ -13,6 +13,7 @@ import {
   useSettings,
 } from "@/lib/settings-store";
 import { DuaCard } from "./dua-card";
+import { PersonalizationFields, Toggle } from "./personalization";
 
 const themeOptions: { value: Theme; label: string }[] = [
   { value: "system", label: "Otomatis" },
@@ -25,28 +26,6 @@ const densityOptions: { value: Density; label: string }[] = [
   { value: "comfortable", label: "Nyaman" },
   { value: "loose", label: "Lega" },
 ];
-
-const Toggle = ({
-  label,
-  checked,
-  onChange,
-}: {
-  label: string;
-  checked: boolean;
-  onChange: (value: boolean) => void;
-}) => (
-  <label className="flex min-h-14 cursor-pointer items-center justify-between gap-4 px-4">
-    <span className="font-semibold">{label}</span>
-    <input
-      type="checkbox"
-      role="switch"
-      checked={checked}
-      onChange={(e) => onChange(e.target.checked)}
-      className="peer sr-only"
-    />
-    <span className="relative h-8 w-14 shrink-0 rounded-full bg-border transition-colors peer-checked:bg-primary after:absolute after:left-1 after:top-1 after:size-6 after:rounded-full after:bg-white after:shadow after:transition-transform peer-checked:after:translate-x-6 peer-focus-visible:ring-2 peer-focus-visible:ring-primary" />
-  </label>
-);
 
 interface ScaleControlProps {
   label: string;
@@ -116,6 +95,20 @@ export const SettingsPanel = () => {
 
   return (
     <div className="space-y-8">
+      <section>
+        <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-muted">
+          Personalisasi
+        </h2>
+        <PersonalizationFields
+          value={settings}
+          onChange={(patch) =>
+            settings.setPersonalization(
+              patch.scrollLock ? { ...patch, immersive: true } : patch,
+            )
+          }
+        />
+      </section>
+
       <section>
         <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-muted">
           Ukuran huruf

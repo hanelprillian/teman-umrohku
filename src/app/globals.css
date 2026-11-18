@@ -106,6 +106,9 @@ a {
   line-height: 1.65;
 }
 
+html[data-gender="pria"] [data-audience="wanita"],
+html[data-gender="wanita"] [data-audience="pria"],
+html[data-gender] .audience-prefix,
 html[data-hide-latin] .latin-text,
 html[data-hide-translation] .translation-text,
 html[data-hide-dalil] .dalil-section {

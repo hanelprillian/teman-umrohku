@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useRef } from "react";
+import { type ReactNode, useState } from "react";
 import type { Session } from "@/content/types";
-import { useHeaderHeightVar } from "@/lib/hooks";
+import { useHeightVar } from "@/lib/hooks";
 import { ArrowLeftIcon } from "./icons";
 import { IhramRulesButton } from "./ihram-rules";
 import { LinkPending } from "./link-pending";
@@ -12,19 +12,21 @@ interface SessionHeaderProps {
   session: Session;
   stepIndex: number;
   compact?: boolean;
+  actions?: ReactNode;
 }
 
 export const SessionHeader = ({
   session,
   stepIndex,
   compact = false,
+  actions,
 }: SessionHeaderProps) => {
-  const headerRef = useRef<HTMLElement>(null);
-  useHeaderHeightVar(headerRef);
+  const [header, setHeader] = useState<HTMLElement | null>(null);
+  useHeightVar(header, "--header-h");
 
   return (
     <header
-      ref={headerRef}
+      ref={setHeader}
       className="pt-safe sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur"
     >
       <div
@@ -56,7 +58,8 @@ export const SessionHeader = ({
             </p>
           </div>
         )}
-        <IhramRulesButton variant="icon" />
+        {actions}
+        <IhramRulesButton variant={compact ? "icon" : "pill"} />
       </div>
       <div className={`mx-auto flex max-w-xl gap-1 px-4 ${compact ? "pb-2" : "pb-3"}`}>
         {session.steps.map((s, index) => (

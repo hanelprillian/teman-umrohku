@@ -11,6 +11,7 @@ export const SettingsSync = () => {
   const showTranslation = useSettings((s) => s.showTranslation);
   const showDalil = useSettings((s) => s.showDalil);
   const density = useSettings((s) => s.density);
+  const gender = useSettings((s) => s.gender);
 
   useLayoutEffect(() => {
     applySettingsToDocument({
@@ -21,8 +22,9 @@ export const SettingsSync = () => {
       showTranslation,
       showDalil,
       density,
+      gender,
     });
-  }, [theme, fontScale, arabicScale, showLatin, showTranslation, showDalil, density]);
+  }, [theme, fontScale, arabicScale, showLatin, showTranslation, showDalil, density, gender]);
 
   useEffect(() => {
     if (theme !== "system") return;

@@ -13,6 +13,7 @@ import {
   CounterTapButton,
   type LapToast,
   UndoToast,
+  useCounterFocus,
 } from "./counter";
 import { ActionButton } from "./action-button";
 import { ArrowLeftIcon, ArrowRightIcon, CheckIcon } from "./icons";
@@ -127,7 +128,8 @@ const StandardRunner = ({ session }: { session: Session }) => {
 
   const laps = progress?.laps?.[step.id] ?? [];
   const [lapToast, setLapToast] = useState<LapToast | null>(null);
-  const [focusOpen, setFocusOpen] = useState(false);
+  const focus = useCounterFocus(step.counter ? step.id : undefined, !counterDone);
+  const focusOpen = focus.open;
 
   const recordLap = () => {
     scrollPending.current = true;
@@ -171,7 +173,7 @@ const StandardRunner = ({ session }: { session: Session }) => {
               count={count}
               laps={laps}
               onUndo={() => setCount(session.id, step.id, Math.max(0, count - 1))}
-              onExpand={() => setFocusOpen(true)}
+              onExpand={focus.expand}
             />
           </div>
         )}
@@ -235,7 +237,7 @@ const StandardRunner = ({ session }: { session: Session }) => {
           count={count}
           laps={laps}
           onTap={recordLap}
-          onClose={() => setFocusOpen(false)}
+          onClose={focus.close}
           toast={toast}
         />
       )}

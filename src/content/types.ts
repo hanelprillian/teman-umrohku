@@ -31,9 +31,14 @@ export interface Tip {
   warning?: boolean;
 }
 
+export interface RoundHint {
+  text: string;
+  audience?: Audience;
+}
+
 export interface CounterRound {
   label: string;
-  hint?: string;
+  hints?: RoundHint[];
 }
 
 export interface Counter {

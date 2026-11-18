@@ -1,8 +1,9 @@
 "use client";
 
 import { type ReactNode, useEffect, useRef, useState } from "react";
-import type { Counter } from "@/content/types";
+import type { Audience, Counter, RoundHint } from "@/content/types";
 import { useNow } from "@/lib/hooks";
+import { useSettings } from "@/lib/settings-store";
 import { ActionButton } from "./action-button";
 import { CheckIcon, ExpandIcon, UndoIcon } from "./icons";
 
@@ -19,6 +20,61 @@ const formatMinutes = (ms: number) => {
 
 const currentRound = (counter: Counter, count: number) =>
   counter.rounds[Math.min(count, counter.total - 1)];
+
+/**
+ * Full-screen counter state. With the auto setting on, it opens on every step
+ * whose counter is still pending until the user closes it for that step.
+ */
+export const useCounterFocus = (stepId: string | undefined, pending: boolean) => {
+  const autoFocusCounter = useSettings((s) => s.autoFocusCounter);
+  const [manual, setManual] = useState(false);
+  const [dismissedFor, setDismissedFor] = useState<string | null>(null);
+
+  return {
+    open:
+      stepId !== undefined &&
+      (manual || (autoFocusCounter && pending && dismissedFor !== stepId)),
+    expand: () => setManual(true),
+    close: () => {
+      setManual(false);
+      setDismissedFor(stepId ?? null);
+    },
+  };
+};
+
+const audienceLabel: Record<Audience, string> = { pria: "Pria", wanita: "Wanita" };
+
+/** Gender-specific hints are hidden via CSS (`data-audience`) per the personalization setting. */
+const RoundHints = ({
+  hints,
+  className = "",
+  truncate = false,
+}: {
+  hints?: RoundHint[];
+  className?: string;
+  truncate?: boolean;
+}) => {
+  if (!hints?.length) return null;
+
+  return (
+    <span className={`block ${truncate ? "truncate" : ""} ${className}`}>
+      {hints.map((hint) => (
+        <span
+          key={`${hint.audience}-${hint.text}`}
+          data-audience={hint.audience}
+          className={
+            truncate ? "inline [&:not(:first-child)]:before:content-['_·_']" : "block"
+          }
+        >
+          {hint.audience && (
+            <span className="audience-prefix">{audienceLabel[hint.audience]}: </span>
+          )}
+          {hint.text}
+        </span>
+      ))}
+    </span>
+  );
+};
 
 const RoundDots = ({
   counter,
@@ -154,11 +210,10 @@ export const CounterPanel = ({ counter, count, laps, onUndo, onExpand }: Counter
             <p className="text-xl font-bold text-primary-strong">
               {current.label}
             </p>
-            {current.hint && (
-              <p className="mt-0.5 text-sm font-medium text-primary-strong/90">
-                {current.hint}
-              </p>
-            )}
+            <RoundHints
+              hints={current.hints}
+              className="mt-0.5 text-sm font-medium text-primary-strong/90"
+            />
           </>
         )}
       </div>
@@ -213,8 +268,8 @@ export const CounterStrip = ({ counter, count, visible, onSelect }: CounterStrip
           <span className="block truncate text-sm font-bold">
             {done ? `${counter.total} ${counter.unit} selesai` : current.label}
           </span>
-          {!done && current.hint && (
-            <span className="block truncate text-xs text-muted">{current.hint}</span>
+          {!done && (
+            <RoundHints hints={current.hints} className="text-xs text-muted" truncate />
           )}
         </span>
         <span className="flex gap-1" aria-hidden>
@@ -412,7 +467,7 @@ export const CounterFocus = ({
         ) : (
           <div>
             <p className="text-3xl font-extrabold">{current.label}</p>
-            {current.hint && <p className="mt-1 text-lg text-muted">{current.hint}</p>}
+            <RoundHints hints={current.hints} className="mt-1 text-lg text-muted" />
           </div>
         )}
         <LastLap laps={laps} />

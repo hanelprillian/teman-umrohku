@@ -3,6 +3,7 @@ import { ContinueCard, SessionStatus } from "@/components/home-progress";
 import { ArrowRightIcon, BookIcon, SettingsIcon } from "@/components/icons";
 import { IhramRulesButton } from "@/components/ihram-rules";
 import { LinkPending } from "@/components/link-pending";
+import { Onboarding } from "@/components/onboarding";
 import { sessions } from "@/content/sessions";
 
 export default function Home() {
@@ -81,6 +82,8 @@ export default function Home() {
         masih dalam tahap peninjauan. Konsultasikan dengan pembimbing/ustadz
         rombonganmu bila ada keraguan.
       </p>
+
+      <Onboarding />
     </main>
   );
 }

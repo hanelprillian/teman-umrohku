@@ -37,7 +37,7 @@ const IhramRulesContent = () => (
     </p>
 
     {groups.map((group) => (
-      <section key={group.title}>
+      <section key={group.title} data-audience={group.audience}>
         <h3 className="mb-3 text-sm font-bold uppercase tracking-wide text-muted">
           {group.title}
         </h3>
@@ -89,7 +89,7 @@ const IhramRulesContent = () => (
   </div>
 );
 
-export const IhramRulesButton = ({ variant }: { variant: "icon" | "card" }) => {
+export const IhramRulesButton = ({ variant }: { variant: "icon" | "pill" | "card" }) => {
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   const open = () => {
@@ -101,6 +101,15 @@ export const IhramRulesButton = ({ variant }: { variant: "icon" | "card" }) => {
   return (
     <>
       {variant === "icon" ? (
+        <button
+          type="button"
+          onClick={open}
+          aria-label="Larangan ihram"
+          className="flex size-11 shrink-0 items-center justify-center rounded-full border border-border active:bg-surface-muted"
+        >
+          <ShieldIcon className="size-5 text-accent" />
+        </button>
+      ) : variant === "pill" ? (
         <button
           type="button"
           onClick={open}

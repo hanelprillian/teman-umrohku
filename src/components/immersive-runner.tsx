@@ -2,8 +2,9 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { Dua, Session, Step } from "@/content/types";
-import { usePagedSwipe, useVisibleBelowHeader } from "@/lib/hooks";
+import { useHeightVar, usePagedSwipe, useVisibleBelowHeader } from "@/lib/hooks";
 import { useProgress } from "@/lib/progress-store";
+import { useSettings } from "@/lib/settings-store";
 import { ActionButton } from "./action-button";
 import {
   CounterFocus,
@@ -12,9 +13,11 @@ import {
   CounterTapButton,
   type LapToast,
   UndoToast,
+  useCounterFocus,
 } from "./counter";
 import { DalilList, StatusBadge } from "./dalil";
 import { CheckIcon } from "./icons";
+import { LockToggle, ThumbPad } from "./scroll-lock";
 import { SessionHeader } from "./session-header";
 import { StepContent, StepTitle } from "./step-content";
 
@@ -189,9 +192,15 @@ export const ImmersiveRunner = ({ session }: { session: Session }) => {
       slide.stepIndex === activeSlide.stepIndex && slide.slideIndex === 0,
   );
 
+  const scrollLock = useSettings((s) => s.scrollLock);
+
   const activeLaps = progress?.laps?.[activeStep.id] ?? [];
   const [lapToast, setLapToast] = useState<LapToast | null>(null);
-  const [focusOpen, setFocusOpen] = useState(false);
+  const focus = useCounterFocus(
+    activeStep.counter ? activeStep.id : undefined,
+    showTapButton,
+  );
+  const focusOpen = focus.open;
   const scrollPending = useRef(false);
 
   const recordLap = () => {
@@ -232,8 +241,11 @@ export const ImmersiveRunner = ({ session }: { session: Session }) => {
   };
 
   const [stage, setStage] = useState<HTMLDivElement | null>(null);
+  const [footer, setFooter] = useState<HTMLElement | null>(null);
+  useHeightVar(footer, "--footer-h");
   usePagedSwipe({
     stage,
+    enabled: !scrollLock,
     getScroller: () => slideRefs.current[activePosition],
     onNext: () => goTo(activePosition + 1),
     onPrev: () => goTo(activePosition - 1, "bottom"),
@@ -257,9 +269,13 @@ export const ImmersiveRunner = ({ session }: { session: Session }) => {
         session={session}
         stepIndex={activeSlide.stepIndex}
         compact
+        actions={<LockToggle />}
       />
 
-      <div ref={setStage} className="relative flex-1 overflow-hidden">
+      <div
+        ref={setStage}
+        className={`relative flex-1 overflow-hidden ${scrollLock ? "touch-none" : ""}`}
+      >
         {slides.map((slide, position) => {
           const { step } = slide;
           const count = counts[step.id] ?? 0;
@@ -279,13 +295,23 @@ export const ImmersiveRunner = ({ session }: { session: Session }) => {
                   ? `Doa: ${slide.dua.title ?? step.title}`
                   : `Langkah ${slide.stepIndex + 1}: ${step.title}`
               }
-              className="absolute inset-0 overflow-y-auto overscroll-contain transition-transform duration-[400ms] ease-out motion-reduce:transition-none"
+              className={`absolute inset-0 overscroll-contain transition-transform duration-[400ms] ease-out motion-reduce:transition-none ${
+                scrollLock ? "overflow-hidden" : "overflow-y-auto"
+              }`}
               style={{ transform: `translateY(${offset * 100}%)` }}
             >
               <div
                 className={`mx-auto flex min-h-full max-w-xl flex-col px-5 ${
                   step.counter && slide.dua ? "pt-20" : "pt-5"
                 } ${counterPending ? "pb-36" : "pb-safe"}`}
+                style={
+                  scrollLock
+                    ? {
+                        paddingBottom:
+                          "calc(max(var(--footer-h, 0px), env(safe-area-inset-bottom)) + var(--spacing) * 44)",
+                      }
+                    : undefined
+                }
               >
                 {slide.dua ? (
                   <DuaSlideContent slide={{ ...slide, dua: slide.dua }} />
@@ -310,7 +336,7 @@ export const ImmersiveRunner = ({ session }: { session: Session }) => {
                               Math.max(0, count - 1),
                             )
                           }
-                          onExpand={() => setFocusOpen(true)}
+                          onExpand={focus.expand}
                         />
                       </div>
                     )}
@@ -340,7 +366,10 @@ export const ImmersiveRunner = ({ session }: { session: Session }) => {
       )}
 
       {activeStep.counter && (showTapButton || toast) && !focusOpen && (
-        <footer className="pb-safe fixed inset-x-0 bottom-0 z-20 border-t border-border bg-background/95 backdrop-blur">
+        <footer
+          ref={setFooter}
+          className="pb-safe fixed inset-x-0 bottom-0 z-20 border-t border-border bg-background/95 backdrop-blur"
+        >
           <div className="mx-auto max-w-xl space-y-3 px-4 pt-3">
             {toast}
             {showTapButton && (
@@ -361,8 +390,19 @@ export const ImmersiveRunner = ({ session }: { session: Session }) => {
           count={activeCount}
           laps={activeLaps}
           onTap={recordLap}
-          onClose={() => setFocusOpen(false)}
+          onClose={focus.close}
           toast={toast}
+        />
+      )}
+
+      {scrollLock && !focusOpen && (
+        <ThumbPad
+          position={activePosition}
+          getScroller={() => slideRefs.current[activePosition]}
+          canPrev={activePosition > 0}
+          canNext={activePosition < slides.length - 1}
+          onPrev={() => goTo(activePosition - 1, "bottom")}
+          onNext={() => goTo(activePosition + 1)}
         />
       )}
     </div>

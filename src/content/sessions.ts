@@ -16,7 +16,17 @@ import {
   talbiyah,
   talbiyahUmroh,
 } from "./duas";
-import type { Session, SessionId } from "./types";
+import type { RoundHint, Session, SessionId } from "./types";
+
+const ramlHints: RoundHint[] = [
+  { audience: "pria", text: "Raml: jalan cepat, langkah pendek" },
+  { audience: "wanita", text: "Berjalan biasa" },
+];
+
+const saiHints = (text: string): RoundHint[] => [
+  { text },
+  { audience: "pria", text: "Lari kecil di antara lampu hijau" },
+];
 
 const ihram: Session = {
   id: "ihram",
@@ -187,13 +197,13 @@ const tawaf: Session = {
         unit: "putaran",
         tapLabel: "Sampai di Hajar Aswad",
         rounds: [
-          { label: "Putaran 1", hint: "Pria: raml (jalan cepat, langkah pendek)" },
-          { label: "Putaran 2", hint: "Pria: raml (jalan cepat, langkah pendek)" },
-          { label: "Putaran 3", hint: "Pria: raml (jalan cepat, langkah pendek)" },
-          { label: "Putaran 4", hint: "Berjalan biasa" },
-          { label: "Putaran 5", hint: "Berjalan biasa" },
-          { label: "Putaran 6", hint: "Berjalan biasa" },
-          { label: "Putaran 7", hint: "Putaran terakhir — berjalan biasa" },
+          { label: "Putaran 1", hints: ramlHints },
+          { label: "Putaran 2", hints: ramlHints },
+          { label: "Putaran 3", hints: ramlHints },
+          { label: "Putaran 4", hints: [{ text: "Berjalan biasa" }] },
+          { label: "Putaran 5", hints: [{ text: "Berjalan biasa" }] },
+          { label: "Putaran 6", hints: [{ text: "Berjalan biasa" }] },
+          { label: "Putaran 7", hints: [{ text: "Putaran terakhir — berjalan biasa" }] },
         ],
       },
       duas: [takbirHajarAswad, rabbanaAtina],
@@ -418,13 +428,16 @@ const sai: Session = {
         unit: "perjalanan",
         tapLabel: "Sampai di bukit tujuan",
         rounds: [
-          { label: "Shafa → Marwah", hint: "Perjalanan 1" },
-          { label: "Marwah → Shafa", hint: "Perjalanan 2" },
-          { label: "Shafa → Marwah", hint: "Perjalanan 3" },
-          { label: "Marwah → Shafa", hint: "Perjalanan 4" },
-          { label: "Shafa → Marwah", hint: "Perjalanan 5" },
-          { label: "Marwah → Shafa", hint: "Perjalanan 6" },
-          { label: "Shafa → Marwah", hint: "Perjalanan terakhir — selesai di Marwah" },
+          { label: "Shafa → Marwah", hints: saiHints("Perjalanan 1") },
+          { label: "Marwah → Shafa", hints: saiHints("Perjalanan 2") },
+          { label: "Shafa → Marwah", hints: saiHints("Perjalanan 3") },
+          { label: "Marwah → Shafa", hints: saiHints("Perjalanan 4") },
+          { label: "Shafa → Marwah", hints: saiHints("Perjalanan 5") },
+          { label: "Marwah → Shafa", hints: saiHints("Perjalanan 6") },
+          {
+            label: "Shafa → Marwah",
+            hints: saiHints("Perjalanan terakhir — selesai di Marwah"),
+          },
         ],
       },
       duas: [dzikirShafaMarwah, rabbighfirWarham],
