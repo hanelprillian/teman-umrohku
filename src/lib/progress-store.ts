@@ -7,6 +7,8 @@ export interface SessionProgress {
   /** Position within a step in immersive mode: 0 = instructions, n = n-th dua. */
   slideIndex?: number;
   counts: Record<string, number>;
+  /** Epoch ms of each counted round, index-aligned with the count. */
+  laps?: Record<string, number[]>;
   completed: boolean;
 }
 
@@ -45,6 +47,11 @@ export const useProgress = create<ProgressState>()(
       setCount: (sessionId, stepId, count) =>
         set((state) => {
           const current = state.sessions[sessionId] ?? emptyProgress;
+          const previous = current.counts[stepId] ?? 0;
+          const laps = (current.laps?.[stepId] ?? []).slice(0, count);
+          // 0 = time unknown (rounds counted before lap times were recorded).
+          while (laps.length < Math.min(previous, count)) laps.push(0);
+          while (laps.length < count) laps.push(Date.now());
           return {
             lastSessionId: sessionId,
             sessions: {
@@ -52,6 +59,7 @@ export const useProgress = create<ProgressState>()(
               [sessionId]: {
                 ...current,
                 counts: { ...current.counts, [stepId]: count },
+                laps: { ...current.laps, [stepId]: laps },
               },
             },
           };

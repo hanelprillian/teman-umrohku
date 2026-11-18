@@ -56,6 +56,17 @@ export const useVisibleBelowHeader = (element: HTMLElement | null) => {
   return element ? visible : false;
 };
 
+export const useNow = (intervalMs: number) => {
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), intervalMs);
+    return () => clearInterval(id);
+  }, [intervalMs]);
+
+  return now;
+};
+
 export const useWakeLock = (enabled: boolean) => {
   useEffect(() => {
     if (!enabled || !("wakeLock" in navigator)) return;

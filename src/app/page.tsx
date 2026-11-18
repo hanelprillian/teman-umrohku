@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ContinueCard, SessionStatus } from "@/components/home-progress";
-import { SettingsIcon } from "@/components/icons";
+import { ArrowRightIcon, BookIcon, SettingsIcon } from "@/components/icons";
+import { IhramRulesButton } from "@/components/ihram-rules";
 import { LinkPending } from "@/components/link-pending";
 import { sessions } from "@/content/sessions";
 
@@ -50,6 +51,29 @@ export default function Home() {
             </li>
           ))}
         </ol>
+      </section>
+
+      <section className="mt-8">
+        <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-muted">
+          Rujukan cepat
+        </h2>
+        <div className="space-y-3">
+          <Link
+            href="/doa/"
+            className="relative flex items-center gap-4 rounded-2xl border border-border bg-surface p-4 active:bg-surface-muted"
+          >
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary-soft text-primary-strong">
+              <BookIcon className="size-6" />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-lg font-bold">Kumpulan doa</span>
+              <span className="block text-sm text-muted">Semua bacaan, bisa dicari</span>
+            </span>
+            <ArrowRightIcon className="size-5 shrink-0 text-muted" />
+            <LinkPending />
+          </Link>
+          <IhramRulesButton variant="card" />
+        </div>
       </section>
 
       <p className="mt-8 rounded-2xl bg-accent-soft px-4 py-3 text-sm leading-relaxed">

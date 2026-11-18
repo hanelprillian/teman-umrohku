@@ -149,6 +149,19 @@ details > summary::-webkit-details-marker {
   animation: pop 320ms ease-out;
 }
 
+@keyframes toast-timer {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+.animate-toast-timer {
+  animation: toast-timer linear forwards;
+}
+
 @keyframes fade-in {
   to {
     opacity: 1;

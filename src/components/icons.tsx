@@ -53,6 +53,32 @@ export const BookIcon = (props: IconProps) => (
   </svg>
 );
 
+export const ExpandIcon = (props: IconProps) => (
+  <svg {...base} {...props}>
+    <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+  </svg>
+);
+
+export const ShieldIcon = (props: IconProps) => (
+  <svg {...base} {...props}>
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />
+    <path d="m4.9 4.9 14.2 14.2" />
+  </svg>
+);
+
+export const SearchIcon = (props: IconProps) => (
+  <svg {...base} {...props}>
+    <circle cx="11" cy="11" r="7" />
+    <path d="m20 20-3.5-3.5" />
+  </svg>
+);
+
+export const CloseIcon = (props: IconProps) => (
+  <svg {...base} {...props}>
+    <path d="M18 6 6 18M6 6l12 12" />
+  </svg>
+);
+
 export const SpinnerIcon = ({ className = "", ...props }: IconProps) => (
   <svg {...base} {...props} className={`animate-spin ${className}`}>
     <path d="M21 12a9 9 0 1 1-6.22-8.56" />

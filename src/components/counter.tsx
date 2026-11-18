@@ -1,22 +1,112 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 import type { Counter } from "@/content/types";
+import { useNow } from "@/lib/hooks";
 import { ActionButton } from "./action-button";
-import { CheckIcon, UndoIcon } from "./icons";
+import { CheckIcon, ExpandIcon, UndoIcon } from "./icons";
 
 const TAP_LOCK_MS = 2000;
 const MOUNT_GUARD_MS = 700;
+const UNDO_TOAST_MS = 5000;
+
+const timeFormat = new Intl.DateTimeFormat("id-ID", { hour: "2-digit", minute: "2-digit" });
+const formatTime = (time: number) => (time ? timeFormat.format(time) : "—");
+const formatMinutes = (ms: number) => {
+  const minutes = Math.floor(ms / 60_000);
+  return minutes < 1 ? "<1 mnt" : `${minutes} mnt`;
+};
+
+const currentRound = (counter: Counter, count: number) =>
+  counter.rounds[Math.min(count, counter.total - 1)];
+
+const RoundDots = ({
+  counter,
+  count,
+  large = false,
+}: {
+  counter: Counter;
+  count: number;
+  large?: boolean;
+}) => (
+  <ol className={`flex justify-between ${large ? "gap-2" : "gap-1.5"}`} aria-hidden>
+    {counter.rounds.map((round, index) => {
+      const isDone = index < count;
+      const isCurrent = index === count;
+      return (
+        <li
+          key={`${round.label}-${index}`}
+          className={`flex aspect-square flex-1 items-center justify-center rounded-full font-bold transition-colors ${
+            large ? "text-lg" : "text-sm"
+          } ${
+            isDone
+              ? "bg-primary text-primary-foreground"
+              : isCurrent
+                ? "border-2 border-primary text-primary"
+                : "border border-border text-muted"
+          }`}
+        >
+          {isDone ? <CheckIcon className={large ? "size-5" : "size-4"} /> : index + 1}
+        </li>
+      );
+    })}
+  </ol>
+);
+
+const LastLap = ({ laps, className = "" }: { laps: number[]; className?: string }) => {
+  const now = useNow(30_000);
+  const last = laps.at(-1);
+  if (!last) return null;
+
+  return (
+    <p className={`text-sm text-muted ${className}`}>
+      Terakhir tercatat <span className="font-semibold text-foreground">{formatTime(last)}</span>
+      {" · "}
+      {formatMinutes(now - last)} lalu
+    </p>
+  );
+};
+
+const LapHistory = ({ counter, laps }: { counter: Counter; laps: number[] }) => (
+  <details className="group mt-4">
+    <summary className="flex cursor-pointer items-center justify-between gap-3">
+      <LastLap laps={laps} />
+      <span className="shrink-0 text-sm font-semibold text-primary group-open:hidden">
+        Riwayat
+      </span>
+    </summary>
+    <ol className="mt-3 space-y-1.5 text-sm">
+      {laps.map((time, index) => {
+        const previous = laps[index - 1];
+        return (
+          <li key={index} className="flex justify-between gap-3">
+            <span className="capitalize text-muted">
+              {counter.unit} {index + 1}
+            </span>
+            <span className="tabular-nums">
+              {formatTime(time)}
+              {previous > 0 && time > 0 && (
+                <span className="text-muted"> ({formatMinutes(time - previous)})</span>
+              )}
+            </span>
+          </li>
+        );
+      })}
+    </ol>
+  </details>
+);
 
 interface CounterPanelProps {
   counter: Counter;
   count: number;
+  laps: number[];
   onUndo: () => void;
+  onExpand: () => void;
 }
 
-export const CounterPanel = ({ counter, count, onUndo }: CounterPanelProps) => {
+export const CounterPanel = ({ counter, count, laps, onUndo, onExpand }: CounterPanelProps) => {
   const done = count >= counter.total;
-  const current = counter.rounds[Math.min(count, counter.total - 1)];
+  const current = currentRound(counter, count);
 
   return (
     <section
@@ -47,26 +137,9 @@ export const CounterPanel = ({ counter, count, onUndo }: CounterPanelProps) => {
         )}
       </div>
 
-      <ol className="mt-5 flex justify-between gap-1.5" aria-hidden>
-        {counter.rounds.map((round, index) => {
-          const isDone = index < count;
-          const isCurrent = index === count;
-          return (
-            <li
-              key={`${round.label}-${index}`}
-              className={`flex aspect-square flex-1 items-center justify-center rounded-full text-sm font-bold transition-colors ${
-                isDone
-                  ? "bg-primary text-primary-foreground"
-                  : isCurrent
-                    ? "border-2 border-primary text-primary"
-                    : "border border-border text-muted"
-              }`}
-            >
-              {isDone ? <CheckIcon className="size-4" /> : index + 1}
-            </li>
-          );
-        })}
-      </ol>
+      <div className="mt-5">
+        <RoundDots counter={counter} count={count} />
+      </div>
 
       <div className="mt-5 rounded-2xl bg-primary-soft px-4 py-3">
         {done ? (
@@ -89,6 +162,18 @@ export const CounterPanel = ({ counter, count, onUndo }: CounterPanelProps) => {
           </>
         )}
       </div>
+
+      {laps.length > 0 && <LapHistory counter={counter} laps={laps} />}
+
+      {!done && (
+        <button
+          type="button"
+          onClick={onExpand}
+          className="mt-4 flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl border border-border font-semibold active:bg-surface-muted"
+        >
+          <ExpandIcon className="size-5" /> Mode hitung layar penuh
+        </button>
+      )}
     </section>
   );
 };
@@ -102,7 +187,7 @@ interface CounterStripProps {
 
 export const CounterStrip = ({ counter, count, visible, onSelect }: CounterStripProps) => {
   const done = count >= counter.total;
-  const current = counter.rounds[Math.min(count, counter.total - 1)];
+  const current = currentRound(counter, count);
 
   return (
     <div
@@ -155,9 +240,15 @@ interface CounterTapButtonProps {
   counter: Counter;
   count: number;
   onTap: () => void;
+  large?: boolean;
 }
 
-export const CounterTapButton = ({ counter, count, onTap }: CounterTapButtonProps) => {
+export const CounterTapButton = ({
+  counter,
+  count,
+  onTap,
+  large = false,
+}: CounterTapButtonProps) => {
   const [locked, setLocked] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const mountedAt = useRef(0);
@@ -181,26 +272,166 @@ export const CounterTapButton = ({ counter, count, onTap }: CounterTapButtonProp
       type="button"
       onClick={handleTap}
       disabled={locked}
-      className={`flex min-h-24 w-full flex-col items-center justify-center rounded-3xl px-4 py-3 text-center shadow-lg transition-[transform,background-color] active:scale-[0.98] ${
+      className={`flex w-full flex-col items-center justify-center rounded-3xl px-4 py-3 text-center shadow-lg transition-[transform,background-color] active:scale-[0.98] ${
+        large ? "min-h-[38dvh]" : "min-h-24"
+      } ${
         locked
           ? "bg-primary-soft text-primary-strong"
           : "bg-primary text-primary-foreground"
       }`}
     >
       {locked ? (
-        <span className="flex items-center gap-2 text-xl font-bold">
-          <CheckIcon className="size-6" /> Tercatat
+        <span className={`flex items-center gap-2 font-bold ${large ? "text-3xl" : "text-xl"}`}>
+          <CheckIcon className={large ? "size-8" : "size-6"} /> Tercatat
         </span>
       ) : (
         <>
-          <span className="text-xl font-extrabold">
+          <span className={`font-extrabold ${large ? "text-3xl" : "text-xl"}`}>
             Selesai {counter.unit} ke-{count + 1}
           </span>
-          <span className="mt-0.5 text-sm font-medium opacity-90">
+          <span className={`mt-1 font-medium opacity-90 ${large ? "text-lg" : "text-sm"}`}>
             Tekan saat: {counter.tapLabel}
           </span>
         </>
       )}
     </button>
+  );
+};
+
+export interface LapToast {
+  id: number;
+  stepId: string;
+  count: number;
+}
+
+interface UndoToastProps {
+  message: string;
+  onUndo: () => void;
+  onDismiss: () => void;
+}
+
+/** Render with a `key` per tap so the timer restarts. */
+export const UndoToast = ({ message, onUndo, onDismiss }: UndoToastProps) => {
+  const dismiss = useRef(onDismiss);
+
+  useEffect(() => {
+    dismiss.current = onDismiss;
+  });
+
+  useEffect(() => {
+    const id = setTimeout(() => dismiss.current(), UNDO_TOAST_MS);
+    return () => clearTimeout(id);
+  }, []);
+
+  return (
+    <div
+      role="status"
+      className="relative flex items-center gap-3 overflow-hidden rounded-2xl bg-foreground py-2 pl-4 pr-2 text-background shadow-lg"
+    >
+      <CheckIcon className="size-5 shrink-0" />
+      <p className="min-w-0 flex-1 font-semibold first-letter:uppercase">{message}</p>
+      <button
+        type="button"
+        onClick={onUndo}
+        className="flex min-h-11 shrink-0 items-center gap-1.5 rounded-xl bg-background px-3 font-bold text-foreground active:opacity-80"
+      >
+        <UndoIcon className="size-4" /> Batalkan
+      </button>
+      <span
+        aria-hidden
+        className="animate-toast-timer absolute inset-x-0 bottom-0 h-1 origin-left bg-primary"
+        style={{ animationDuration: `${UNDO_TOAST_MS}ms` }}
+      />
+    </div>
+  );
+};
+
+interface CounterFocusProps {
+  title: string;
+  counter: Counter;
+  count: number;
+  laps: number[];
+  onTap: () => void;
+  onClose: () => void;
+  toast?: ReactNode;
+}
+
+export const CounterFocus = ({
+  title,
+  counter,
+  count,
+  laps,
+  onTap,
+  onClose,
+  toast,
+}: CounterFocusProps) => {
+  const done = count >= counter.total;
+  const current = currentRound(counter, count);
+
+  useEffect(() => {
+    const { style } = document.body;
+    const previous = style.overflow;
+    style.overflow = "hidden";
+    return () => {
+      style.overflow = previous;
+    };
+  }, []);
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Hitung ${counter.unit} layar penuh`}
+      className="pt-safe fixed inset-0 z-50 flex flex-col bg-background"
+    >
+      <div className="mx-auto flex w-full max-w-xl items-center gap-3 px-4 py-3">
+        <p className="min-w-0 flex-1 truncate font-semibold text-muted">{title}</p>
+        <button
+          type="button"
+          onClick={onClose}
+          className="min-h-11 shrink-0 rounded-full border border-border px-4 font-semibold active:bg-surface-muted"
+        >
+          Tutup
+        </button>
+      </div>
+
+      <div className="mx-auto flex w-full max-w-xl flex-1 flex-col justify-center gap-6 px-6 text-center">
+        <p
+          key={count}
+          aria-live="polite"
+          className="animate-pop text-[7rem] font-extrabold leading-none tabular-nums text-primary"
+        >
+          {count}
+          <span className="text-5xl font-bold text-muted">/{counter.total}</span>
+        </p>
+        <RoundDots counter={counter} count={count} large />
+        {done ? (
+          <p className="text-2xl font-bold text-primary-strong">
+            Alhamdulillah, {counter.total} {counter.unit} selesai
+          </p>
+        ) : (
+          <div>
+            <p className="text-3xl font-extrabold">{current.label}</p>
+            {current.hint && <p className="mt-1 text-lg text-muted">{current.hint}</p>}
+          </div>
+        )}
+        <LastLap laps={laps} />
+      </div>
+
+      <div className="pb-safe mx-auto w-full max-w-xl space-y-3 px-4 pt-2">
+        {toast}
+        {done ? (
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex min-h-20 w-full items-center justify-center rounded-3xl bg-primary text-xl font-bold text-primary-foreground"
+          >
+            Tutup & lanjutkan
+          </button>
+        ) : (
+          <CounterTapButton counter={counter} count={count} onTap={onTap} large />
+        )}
+      </div>
+    </div>
   );
 };

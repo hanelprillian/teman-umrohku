@@ -5,6 +5,7 @@ import { useRef } from "react";
 import type { Session } from "@/content/types";
 import { useHeaderHeightVar } from "@/lib/hooks";
 import { ArrowLeftIcon } from "./icons";
+import { IhramRulesButton } from "./ihram-rules";
 import { LinkPending } from "./link-pending";
 
 interface SessionHeaderProps {
@@ -55,6 +56,7 @@ export const SessionHeader = ({
             </p>
           </div>
         )}
+        <IhramRulesButton variant="icon" />
       </div>
       <div className={`mx-auto flex max-w-xl gap-1 px-4 ${compact ? "pb-2" : "pb-3"}`}>
         {session.steps.map((s, index) => (

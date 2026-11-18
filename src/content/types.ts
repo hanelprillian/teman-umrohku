@@ -3,6 +3,7 @@ export type DalilStatus =
   | "shahih"
   | "hasan"
   | "atsar"
+  | "ijma"
   | "diperselisihkan";
 
 export interface Dalil {

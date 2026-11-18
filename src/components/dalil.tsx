@@ -5,6 +5,7 @@ const statusStyles: Record<DalilStatus, { label: string; className: string }> = 
   shahih: { label: "Shahih", className: "bg-primary-soft text-primary-strong" },
   hasan: { label: "Hasan", className: "bg-primary-soft text-primary-strong" },
   atsar: { label: "Atsar Sahabat", className: "bg-accent-soft text-accent" },
+  ijma: { label: "Ijma' Ulama", className: "bg-primary-soft text-primary-strong" },
   diperselisihkan: {
     label: "Diperselisihkan",
     className: "bg-danger-soft text-danger",

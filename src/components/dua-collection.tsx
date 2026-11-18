@@ -1,0 +1,106 @@
+"use client";
+
+import { useDeferredValue, useState } from "react";
+import { sessions } from "@/content/sessions";
+import type { Dua, Session } from "@/content/types";
+import { DuaCard } from "./dua-card";
+import { CloseIcon, SearchIcon } from "./icons";
+
+interface DuaEntry {
+  dua: Dua;
+  stepTitles: string[];
+  searchText: string;
+}
+
+const normalize = (text: string) =>
+  text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/['‘’ʿʾ`-]/g, "")
+    .toLowerCase();
+
+const groups: { session: Session; entries: DuaEntry[] }[] = sessions.map((session) => {
+  const entries = new Map<string, DuaEntry>();
+  for (const step of session.steps) {
+    for (const dua of step.duas ?? []) {
+      const entry = entries.get(dua.id);
+      if (entry) {
+        entry.stepTitles.push(step.title);
+        continue;
+      }
+      entries.set(dua.id, {
+        dua,
+        stepTitles: [step.title],
+        searchText: normalize(
+          [session.title, step.title, dua.title, dua.latin, dua.translation].join(" "),
+        ),
+      });
+    }
+  }
+  return { session, entries: [...entries.values()] };
+});
+
+export const DuaCollection = () => {
+  const [query, setQuery] = useState("");
+  const deferredQuery = useDeferredValue(query);
+  const terms = normalize(deferredQuery).split(/\s+/).filter(Boolean);
+
+  const results = groups
+    .map((group) => ({
+      ...group,
+      entries: group.entries.filter((entry) =>
+        terms.every((term) => entry.searchText.includes(term)),
+      ),
+    }))
+    .filter((group) => group.entries.length > 0);
+
+  return (
+    <div className="space-y-8">
+      <label className="sticky top-0 z-10 -mx-4 block bg-background/95 px-4 py-3 backdrop-blur">
+        <span className="sr-only">Cari doa</span>
+        <span className="flex min-h-14 items-center gap-3 rounded-2xl border border-border bg-surface px-4 focus-within:border-primary">
+          <SearchIcon className="size-5 shrink-0 text-muted" />
+          <input
+            type="search"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Cari: talbiyah, zamzam, shafa…"
+            className="min-w-0 flex-1 bg-transparent text-lg outline-none placeholder:text-muted [&::-webkit-search-cancel-button]:hidden"
+          />
+          {query && (
+            <button
+              type="button"
+              onClick={() => setQuery("")}
+              aria-label="Hapus pencarian"
+              className="-mr-2 flex size-10 items-center justify-center rounded-full text-muted active:bg-surface-muted"
+            >
+              <CloseIcon className="size-5" />
+            </button>
+          )}
+        </span>
+      </label>
+
+      {results.length === 0 && (
+        <p className="py-10 text-center text-reading text-muted">
+          Tidak ada doa yang cocok dengan &ldquo;{deferredQuery}&rdquo;.
+        </p>
+      )}
+
+      {results.map(({ session, entries }) => (
+        <section key={session.id}>
+          <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-primary">
+            {session.title}
+          </h2>
+          <div className="space-y-5">
+            {entries.map(({ dua, stepTitles }) => (
+              <div key={dua.id}>
+                <p className="mb-1.5 px-1 text-sm text-muted">{stepTitles.join(" · ")}</p>
+                <DuaCard dua={dua} />
+              </div>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  );
+};

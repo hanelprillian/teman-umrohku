@@ -5,7 +5,14 @@ import type { Dua, Session, Step } from "@/content/types";
 import { useVisibleBelowHeader } from "@/lib/hooks";
 import { useProgress } from "@/lib/progress-store";
 import { ActionButton } from "./action-button";
-import { CounterPanel, CounterStrip, CounterTapButton } from "./counter";
+import {
+  CounterFocus,
+  CounterPanel,
+  CounterStrip,
+  CounterTapButton,
+  type LapToast,
+  UndoToast,
+} from "./counter";
 import { DalilList, StatusBadge } from "./dalil";
 import { CheckIcon } from "./icons";
 import { SessionHeader } from "./session-header";
@@ -173,6 +180,29 @@ export const ImmersiveRunner = ({ session }: { session: Session }) => {
     (slide) => slide.stepIndex === activeSlide.stepIndex && slide.slideIndex === 0,
   );
 
+  const activeLaps = progress?.laps?.[activeStep.id] ?? [];
+  const [lapToast, setLapToast] = useState<LapToast | null>(null);
+  const [focusOpen, setFocusOpen] = useState(false);
+  const scrollPending = useRef(false);
+
+  const recordLap = () => {
+    scrollPending.current = true;
+    setCount(session.id, activeStep.id, activeCount + 1);
+    setLapToast({ id: Date.now(), stepId: activeStep.id, count: activeCount + 1 });
+  };
+
+  const toast = lapToast && activeStep.counter && (
+    <UndoToast
+      key={lapToast.id}
+      message={`${activeStep.counter.unit} ${lapToast.count} tercatat`}
+      onUndo={() => {
+        setCount(session.id, lapToast.stepId, lapToast.count - 1);
+        setLapToast(null);
+      }}
+      onDismiss={() => setLapToast(null)}
+    />
+  );
+
   useLayoutEffect(() => {
     const root = document.documentElement;
     root.classList.add("snap-steps");
@@ -229,7 +259,6 @@ export const ImmersiveRunner = ({ session }: { session: Session }) => {
   const scrollToSlide = (position: number) =>
     slideRefs.current[position]?.scrollIntoView({ behavior: "smooth", block: "start" });
 
-  const scrollPending = useRef(false);
   useEffect(() => {
     if (!scrollPending.current) return;
     scrollPending.current = false;
@@ -282,9 +311,11 @@ export const ImmersiveRunner = ({ session }: { session: Session }) => {
                     <CounterPanel
                       counter={step.counter}
                       count={count}
+                      laps={progress?.laps?.[step.id] ?? []}
                       onUndo={() =>
                         setCount(session.id, step.id, Math.max(0, count - 1))
                       }
+                      onExpand={() => setFocusOpen(true)}
                     />
                   </div>
                 )}
@@ -311,19 +342,31 @@ export const ImmersiveRunner = ({ session }: { session: Session }) => {
         />
       )}
 
-      {showTapButton && activeStep.counter && (
+      {activeStep.counter && (showTapButton || toast) && !focusOpen && (
         <footer className="pb-safe fixed inset-x-0 bottom-0 z-20 border-t border-border bg-background/95 backdrop-blur">
-          <div className="mx-auto max-w-xl px-4 pt-3">
-            <CounterTapButton
-              counter={activeStep.counter}
-              count={activeCount}
-              onTap={() => {
-                scrollPending.current = true;
-                setCount(session.id, activeStep.id, activeCount + 1);
-              }}
-            />
+          <div className="mx-auto max-w-xl space-y-3 px-4 pt-3">
+            {toast}
+            {showTapButton && (
+              <CounterTapButton
+                counter={activeStep.counter}
+                count={activeCount}
+                onTap={recordLap}
+              />
+            )}
           </div>
         </footer>
+      )}
+
+      {focusOpen && activeStep.counter && (
+        <CounterFocus
+          title={`${session.title} · ${activeStep.title}`}
+          counter={activeStep.counter}
+          count={activeCount}
+          laps={activeLaps}
+          onTap={recordLap}
+          onClose={() => setFocusOpen(false)}
+          toast={toast}
+        />
       )}
     </div>
   );

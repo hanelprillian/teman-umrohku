@@ -6,7 +6,14 @@ import type { Session } from "@/content/types";
 import { useHydrated, useVisibleBelowHeader, useWakeLock } from "@/lib/hooks";
 import { useProgress } from "@/lib/progress-store";
 import { useSettings } from "@/lib/settings-store";
-import { CounterPanel, CounterStrip, CounterTapButton } from "./counter";
+import {
+  CounterFocus,
+  CounterPanel,
+  CounterStrip,
+  CounterTapButton,
+  type LapToast,
+  UndoToast,
+} from "./counter";
 import { ActionButton } from "./action-button";
 import { ArrowLeftIcon, ArrowRightIcon, CheckIcon } from "./icons";
 import { ImmersiveRunner } from "./immersive-runner";
@@ -118,6 +125,28 @@ const StandardRunner = ({ session }: { session: Session }) => {
 
   const goBack = () => setStep(session.id, Math.max(0, stepIndex - 1));
 
+  const laps = progress?.laps?.[step.id] ?? [];
+  const [lapToast, setLapToast] = useState<LapToast | null>(null);
+  const [focusOpen, setFocusOpen] = useState(false);
+
+  const recordLap = () => {
+    scrollPending.current = true;
+    setCount(session.id, step.id, count + 1);
+    setLapToast({ id: Date.now(), stepId: step.id, count: count + 1 });
+  };
+
+  const toast = lapToast && step.counter && (
+    <UndoToast
+      key={lapToast.id}
+      message={`${step.counter.unit} ${lapToast.count} tercatat`}
+      onUndo={() => {
+        setCount(session.id, lapToast.stepId, lapToast.count - 1);
+        setLapToast(null);
+      }}
+      onDismiss={() => setLapToast(null)}
+    />
+  );
+
   return (
     <div className="min-h-dvh">
       <SessionHeader session={session} stepIndex={stepIndex} />
@@ -140,7 +169,9 @@ const StandardRunner = ({ session }: { session: Session }) => {
             <CounterPanel
               counter={step.counter}
               count={count}
+              laps={laps}
               onUndo={() => setCount(session.id, step.id, Math.max(0, count - 1))}
+              onExpand={() => setFocusOpen(true)}
             />
           </div>
         )}
@@ -159,15 +190,9 @@ const StandardRunner = ({ session }: { session: Session }) => {
 
       <footer className="pb-safe fixed inset-x-0 bottom-0 z-20 border-t border-border bg-background/95 backdrop-blur">
         <div className="mx-auto max-w-xl space-y-3 px-4 pt-3">
+          {!focusOpen && toast}
           {step.counter && !counterDone ? (
-            <CounterTapButton
-              counter={step.counter}
-              count={count}
-              onTap={() => {
-                scrollPending.current = true;
-                setCount(session.id, step.id, count + 1);
-              }}
-            />
+            <CounterTapButton counter={step.counter} count={count} onTap={recordLap} />
           ) : (
             <div className="flex gap-3">
               {stepIndex > 0 && (
@@ -202,6 +227,18 @@ const StandardRunner = ({ session }: { session: Session }) => {
           )}
         </div>
       </footer>
+
+      {focusOpen && step.counter && (
+        <CounterFocus
+          title={`${session.title} · ${step.title}`}
+          counter={step.counter}
+          count={count}
+          laps={laps}
+          onTap={recordLap}
+          onClose={() => setFocusOpen(false)}
+          toast={toast}
+        />
+      )}
     </div>
   );
 };
