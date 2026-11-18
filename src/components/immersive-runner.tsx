@@ -204,6 +204,28 @@ export const ImmersiveRunner = ({ session }: { session: Session }) => {
     return () => observer.disconnect();
   }, [session.id, setStep, slides.length]);
 
+  useEffect(() => {
+    const markTall = () => {
+      const header = parseFloat(
+        getComputedStyle(document.documentElement).getPropertyValue("--header-h"),
+      ) || 0;
+      const available = window.innerHeight - header;
+      slideRefs.current.slice(0, slides.length).forEach((slide) => {
+        if (slide) slide.toggleAttribute("data-tall", slide.offsetHeight > available + 1);
+      });
+    };
+
+    const observer = new ResizeObserver(markTall);
+    slideRefs.current
+      .slice(0, slides.length)
+      .forEach((slide) => slide && observer.observe(slide));
+    window.addEventListener("resize", markTall);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", markTall);
+    };
+  }, [slides.length]);
+
   const scrollToSlide = (position: number) =>
     slideRefs.current[position]?.scrollIntoView({ behavior: "smooth", block: "start" });
 
