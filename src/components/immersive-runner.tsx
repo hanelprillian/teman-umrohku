@@ -4,6 +4,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { Dua, Session, Step } from "@/content/types";
 import { useVisibleBelowHeader } from "@/lib/hooks";
 import { useProgress } from "@/lib/progress-store";
+import { ActionButton } from "./action-button";
 import { CounterPanel, CounterStrip, CounterTapButton } from "./counter";
 import { DalilList, StatusBadge } from "./dalil";
 import { CheckIcon } from "./icons";
@@ -54,7 +55,7 @@ const DuaSlideContent = ({ slide }: { slide: Slide & { dua: Dua } }) => {
     <>
       <div className="flex flex-1 flex-col justify-center gap-6 py-4">
         <div className="space-y-2">
-          <p className="text-xs font-bold uppercase tracking-wide text-primary">
+          <p className="text-sm font-bold uppercase tracking-wide text-primary">
             {step.title}
             {total > 1 && ` · Doa ${slideIndex} dari ${total}`}
           </p>
@@ -74,7 +75,7 @@ const DuaSlideContent = ({ slide }: { slide: Slide & { dua: Dua } }) => {
         <p className="translation-text text-reading-lg">“{dua.translation}”</p>
       </div>
 
-      <details className="group rounded-2xl border border-border bg-surface">
+      <details className="dalil-section group rounded-2xl border border-border bg-surface">
         <summary className="flex cursor-pointer items-center gap-3 px-4 py-3">
           <span className="min-w-0 flex-1 truncate text-sm text-muted">
             {firstDalil.source}
@@ -125,13 +126,12 @@ const SlideEnd = ({ nextSlide, gatedBy, onNext, onComplete }: SlideEndProps) => 
   }
 
   return (
-    <button
-      type="button"
-      onClick={onComplete}
+    <ActionButton
+      onAction={onComplete}
       className="mt-6 flex min-h-16 w-full items-center justify-center gap-2 rounded-2xl bg-primary px-4 text-lg font-bold text-primary-foreground active:bg-primary-strong"
     >
       Selesai sesi <CheckIcon className="size-5" />
-    </button>
+    </ActionButton>
   );
 };
 

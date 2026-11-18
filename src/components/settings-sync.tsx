@@ -6,12 +6,21 @@ import { applySettingsToDocument, useSettings } from "@/lib/settings-store";
 export const SettingsSync = () => {
   const theme = useSettings((s) => s.theme);
   const fontScale = useSettings((s) => s.fontScale);
+  const arabicScale = useSettings((s) => s.arabicScale);
   const showLatin = useSettings((s) => s.showLatin);
   const showTranslation = useSettings((s) => s.showTranslation);
+  const showDalil = useSettings((s) => s.showDalil);
 
   useLayoutEffect(() => {
-    applySettingsToDocument({ theme, fontScale, showLatin, showTranslation });
-  }, [theme, fontScale, showLatin, showTranslation]);
+    applySettingsToDocument({
+      theme,
+      fontScale,
+      arabicScale,
+      showLatin,
+      showTranslation,
+      showDalil,
+    });
+  }, [theme, fontScale, arabicScale, showLatin, showTranslation, showDalil]);
 
   useEffect(() => {
     if (theme !== "system") return;

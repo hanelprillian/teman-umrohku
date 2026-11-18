@@ -6,6 +6,7 @@ import type { SessionId } from "@/content/types";
 import { useHydrated } from "@/lib/hooks";
 import { useProgress } from "@/lib/progress-store";
 import { ArrowRightIcon, CheckIcon } from "./icons";
+import { LinkPending } from "./link-pending";
 
 export const ContinueCard = () => {
   const hydrated = useHydrated();
@@ -37,7 +38,7 @@ export const ContinueCard = () => {
   return (
     <Link
       href={`/sesi/${target.id}/`}
-      className="flex items-center gap-4 rounded-3xl bg-primary p-5 text-primary-foreground shadow-lg active:bg-primary-strong"
+      className="relative flex items-center gap-4 rounded-3xl bg-primary p-5 text-primary-foreground shadow-lg active:bg-primary-strong"
     >
       <div className="flex-1">
         <p className="text-sm font-semibold uppercase tracking-wide opacity-80">
@@ -51,6 +52,7 @@ export const ContinueCard = () => {
         </p>
       </div>
       <ArrowRightIcon className="size-7 shrink-0" />
+      <LinkPending />
     </Link>
   );
 };

@@ -45,7 +45,7 @@ export const StepContent = ({
     {step.tips && step.tips.length > 0 && <TipList tips={step.tips} />}
 
     {step.dalil && step.dalil.length > 0 && (
-      <details className="group rounded-2xl border border-border bg-surface">
+      <details className="dalil-section group rounded-2xl border border-border bg-surface">
         <summary className="flex cursor-pointer items-center gap-2 px-4 py-3.5 font-semibold">
           <BookIcon className="size-5 text-primary" />
           Dalil langkah ini

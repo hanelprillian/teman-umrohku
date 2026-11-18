@@ -2,9 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { Counter } from "@/content/types";
+import { ActionButton } from "./action-button";
 import { CheckIcon, UndoIcon } from "./icons";
 
 const TAP_LOCK_MS = 2000;
+const MOUNT_GUARD_MS = 700;
 
 interface CounterPanelProps {
   counter: Counter;
@@ -35,14 +37,13 @@ export const CounterPanel = ({ counter, count, onUndo }: CounterPanelProps) => {
           </p>
         </div>
         {count > 0 && (
-          <button
-            type="button"
-            onClick={onUndo}
-            className="flex items-center gap-1.5 rounded-full border border-border px-3.5 py-2 text-sm font-semibold text-muted active:bg-surface-muted"
+          <ActionButton
+            onAction={onUndo}
+            className="flex min-h-10 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-border px-3.5 py-2 text-sm font-semibold text-muted active:bg-surface-muted"
           >
             <UndoIcon className="size-4" />
             Batalkan 1
-          </button>
+          </ActionButton>
         )}
       </div>
 
@@ -159,11 +160,16 @@ interface CounterTapButtonProps {
 export const CounterTapButton = ({ counter, count, onTap }: CounterTapButtonProps) => {
   const [locked, setLocked] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const mountedAt = useRef(0);
 
-  useEffect(() => () => clearTimeout(timer.current), []);
+  useEffect(() => {
+    mountedAt.current = performance.now();
+    return () => clearTimeout(timer.current);
+  }, []);
 
   const handleTap = () => {
-    if (locked) return;
+    // Swallows the second half of a double tap on the button this one replaced (e.g. "Lanjut").
+    if (locked || performance.now() - mountedAt.current < MOUNT_GUARD_MS) return;
     onTap();
     navigator.vibrate?.(40);
     setLocked(true);

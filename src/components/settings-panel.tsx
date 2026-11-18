@@ -3,7 +3,14 @@
 import { rabbanaAtina } from "@/content/duas";
 import { useHydrated } from "@/lib/hooks";
 import { useProgress } from "@/lib/progress-store";
-import { FONT_SCALES, type Theme, useSettings } from "@/lib/settings-store";
+import type { ReactNode } from "react";
+import {
+  ARABIC_SCALES,
+  FONT_SCALES,
+  nearestScaleIndex,
+  type Theme,
+  useSettings,
+} from "@/lib/settings-store";
 import { DuaCard } from "./dua-card";
 
 const themeOptions: { value: Theme; label: string }[] = [
@@ -34,6 +41,57 @@ const Toggle = ({
   </label>
 );
 
+interface ScaleControlProps {
+  label: string;
+  sample: ReactNode;
+  scales: readonly number[];
+  value: number;
+  onChange: (value: number) => void;
+}
+
+const ScaleControl = ({ label, sample, scales, value, onChange }: ScaleControlProps) => {
+  const index = nearestScaleIndex(scales, value);
+
+  return (
+    <div className="space-y-3 p-4">
+      <p className="font-semibold">{label}</p>
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          aria-label={`Perkecil ${label}`}
+          disabled={index === 0}
+          onClick={() => onChange(scales[index - 1])}
+          className="flex size-12 shrink-0 items-center justify-center rounded-xl border border-border text-xl font-bold disabled:opacity-40"
+        >
+          −
+        </button>
+        <div className="flex flex-1 items-center gap-1.5">
+          {scales.map((scale, scaleIndex) => (
+            <span
+              key={scale}
+              className={`h-2 flex-1 rounded-full ${
+                scaleIndex <= index ? "bg-primary" : "bg-border"
+              }`}
+            />
+          ))}
+        </div>
+        <button
+          type="button"
+          aria-label={`Perbesar ${label}`}
+          disabled={index === scales.length - 1}
+          onClick={() => onChange(scales[index + 1])}
+          className="flex size-12 shrink-0 items-center justify-center rounded-xl border border-border text-xl font-bold disabled:opacity-40"
+        >
+          +
+        </button>
+        <span className="flex w-8 justify-center text-primary" aria-hidden>
+          {sample}
+        </span>
+      </div>
+    </div>
+  );
+};
+
 export const SettingsPanel = () => {
   const hydrated = useHydrated();
   const settings = useSettings();
@@ -42,11 +100,6 @@ export const SettingsPanel = () => {
   if (!hydrated) {
     return <div className="h-96 animate-pulse rounded-3xl bg-surface-muted" />;
   }
-
-  const scaleIndex = FONT_SCALES.indexOf(
-    settings.fontScale as (typeof FONT_SCALES)[number],
-  );
-  const currentIndex = scaleIndex === -1 ? 1 : scaleIndex;
 
   const handleReset = () => {
     if (window.confirm("Hapus semua progres sesi? Hitungan putaran akan kembali ke 0.")) {
@@ -60,35 +113,25 @@ export const SettingsPanel = () => {
         <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-muted">
           Ukuran huruf
         </h2>
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            aria-label="Perkecil huruf"
-            disabled={currentIndex === 0}
-            onClick={() => settings.setFontScale(FONT_SCALES[currentIndex - 1])}
-            className="flex size-14 items-center justify-center rounded-2xl border border-border bg-surface text-lg font-bold disabled:opacity-40"
-          >
-            A−
-          </button>
-          <div className="flex flex-1 justify-center gap-1.5">
-            {FONT_SCALES.map((scale, index) => (
-              <span
-                key={scale}
-                className={`h-2 flex-1 rounded-full ${
-                  index <= currentIndex ? "bg-primary" : "bg-border"
-                }`}
-              />
-            ))}
-          </div>
-          <button
-            type="button"
-            aria-label="Perbesar huruf"
-            disabled={currentIndex === FONT_SCALES.length - 1}
-            onClick={() => settings.setFontScale(FONT_SCALES[currentIndex + 1])}
-            className="flex size-14 items-center justify-center rounded-2xl border border-border bg-surface text-2xl font-bold disabled:opacity-40"
-          >
-            A+
-          </button>
+        <div className="divide-y divide-border rounded-2xl border border-border bg-surface">
+          <ScaleControl
+            label="Huruf Arab"
+            sample={
+              <span dir="rtl" lang="ar" className="font-arabic text-3xl leading-none">
+                أَ
+              </span>
+            }
+            scales={ARABIC_SCALES}
+            value={settings.arabicScale}
+            onChange={settings.setArabicScale}
+          />
+          <ScaleControl
+            label="Teks (Latin, arti, petunjuk)"
+            sample={<span className="text-lg font-bold">A</span>}
+            scales={FONT_SCALES}
+            value={settings.fontScale}
+            onChange={settings.setFontScale}
+          />
         </div>
       </section>
 
@@ -106,6 +149,11 @@ export const SettingsPanel = () => {
             label="Tampilkan arti"
             checked={settings.showTranslation}
             onChange={settings.setShowTranslation}
+          />
+          <Toggle
+            label="Tampilkan dalil & sumber"
+            checked={settings.showDalil}
+            onChange={settings.setShowDalil}
           />
         </div>
       </section>

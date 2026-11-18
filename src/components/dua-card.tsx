@@ -24,7 +24,7 @@ export const DuaCard = ({ dua }: { dua: Dua }) => (
         “{dua.translation}”
       </p>
     </div>
-    <footer className="border-t border-border px-4 py-3">
+    <footer className="dalil-section border-t border-border px-4 py-3">
       <DalilList items={dua.dalil} />
     </footer>
   </article>

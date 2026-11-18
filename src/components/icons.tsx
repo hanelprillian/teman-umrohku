@@ -53,6 +53,12 @@ export const BookIcon = (props: IconProps) => (
   </svg>
 );
 
+export const SpinnerIcon = ({ className = "", ...props }: IconProps) => (
+  <svg {...base} {...props} className={`animate-spin ${className}`}>
+    <path d="M21 12a9 9 0 1 1-6.22-8.56" />
+  </svg>
+);
+
 export const AlertIcon = (props: IconProps) => (
   <svg {...base} {...props}>
     <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z" />

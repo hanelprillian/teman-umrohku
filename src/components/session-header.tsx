@@ -5,6 +5,7 @@ import { useRef } from "react";
 import type { Session } from "@/content/types";
 import { useHeaderHeightVar } from "@/lib/hooks";
 import { ArrowLeftIcon } from "./icons";
+import { LinkPending } from "./link-pending";
 
 interface SessionHeaderProps {
   session: Session;
@@ -33,9 +34,10 @@ export const SessionHeader = ({
         <Link
           href="/"
           aria-label="Kembali ke beranda"
-          className="-ml-2 flex size-11 items-center justify-center rounded-full active:bg-surface-muted"
+          className="relative -ml-2 flex size-11 items-center justify-center rounded-full bg-background active:bg-surface-muted"
         >
           <ArrowLeftIcon className="size-6" />
+          <LinkPending />
         </Link>
         {compact ? (
           <p className="min-w-0 flex-1 truncate text-sm font-semibold">

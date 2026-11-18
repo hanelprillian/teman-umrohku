@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeftIcon } from "@/components/icons";
+import { LinkPending } from "@/components/link-pending";
 import { SettingsPanel } from "@/components/settings-panel";
 
 export const metadata: Metadata = { title: "Pengaturan · Panduan Umroh" };
@@ -12,9 +13,10 @@ export default function SettingsPage() {
         <Link
           href="/"
           aria-label="Kembali ke beranda"
-          className="-ml-2 flex size-11 items-center justify-center rounded-full active:bg-surface-muted"
+          className="relative -ml-2 flex size-11 items-center justify-center rounded-full bg-background active:bg-surface-muted"
         >
           <ArrowLeftIcon className="size-6" />
+          <LinkPending />
         </Link>
         <h1 className="text-2xl font-extrabold">Pengaturan</h1>
       </header>

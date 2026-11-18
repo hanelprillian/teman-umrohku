@@ -59,12 +59,12 @@
 html {
   background: var(--background);
   color: var(--foreground);
+  font-size: calc(100% * var(--font-scale));
   -webkit-text-size-adjust: 100%;
 }
 
 body {
   -webkit-tap-highlight-color: transparent;
-  font-size: calc(1rem * var(--font-scale));
 }
 
 button,
@@ -72,30 +72,32 @@ a {
   touch-action: manipulation;
 }
 
+/* rem already includes --font-scale, so Arabic divides it out to scale independently. */
 .text-arabic {
   font-family: var(--font-arabic);
-  font-size: calc(1.875rem * var(--font-scale));
+  font-size: calc(1.875rem * var(--arabic-scale, 1) / var(--font-scale));
   line-height: 2.15;
 }
 
 .text-arabic-lg {
   font-family: var(--font-arabic);
-  font-size: calc(2.5rem * var(--font-scale));
+  font-size: calc(2.5rem * var(--arabic-scale, 1) / var(--font-scale));
   line-height: 2.1;
 }
 
 .text-reading-lg {
-  font-size: calc(1.1875rem * var(--font-scale));
+  font-size: 1.1875rem;
   line-height: 1.6;
 }
 
 .text-reading {
-  font-size: calc(1.0625rem * var(--font-scale));
+  font-size: 1.0625rem;
   line-height: 1.65;
 }
 
 html[data-hide-latin] .latin-text,
-html[data-hide-translation] .translation-text {
+html[data-hide-translation] .translation-text,
+html[data-hide-dalil] .dalil-section {
   display: none;
 }
 
@@ -140,6 +142,31 @@ details > summary::-webkit-details-marker {
 
 .animate-pop {
   animation: pop 320ms ease-out;
+}
+
+@keyframes fade-in {
+  to {
+    opacity: 1;
+  }
+}
+
+/* Delayed so instant (prefetched) navigations don't flash a spinner. */
+.link-pending {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: inherit;
+  background: inherit;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.link-pending.is-pending {
+  visibility: visible;
+  animation: fade-in 150ms ease 100ms forwards;
 }
 
 @media (prefers-reduced-motion: reduce) {

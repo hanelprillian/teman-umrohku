@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ContinueCard, SessionStatus } from "@/components/home-progress";
 import { SettingsIcon } from "@/components/icons";
+import { LinkPending } from "@/components/link-pending";
 import { sessions } from "@/content/sessions";
 
 export default function Home() {
@@ -16,9 +17,10 @@ export default function Home() {
         <Link
           href="/pengaturan/"
           aria-label="Pengaturan"
-          className="flex size-12 items-center justify-center rounded-full border border-border bg-surface active:bg-surface-muted"
+          className="relative flex size-12 items-center justify-center rounded-full border border-border bg-surface active:bg-surface-muted"
         >
           <SettingsIcon className="size-6" />
+          <LinkPending />
         </Link>
       </header>
 
@@ -33,7 +35,7 @@ export default function Home() {
             <li key={session.id}>
               <Link
                 href={`/sesi/${session.id}/`}
-                className="flex items-center gap-4 rounded-2xl border border-border bg-surface p-4 active:bg-surface-muted"
+                className="relative flex items-center gap-4 rounded-2xl border border-border bg-surface p-4 active:bg-surface-muted"
               >
                 <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary-soft text-lg font-extrabold text-primary-strong">
                   {index + 1}
@@ -43,6 +45,7 @@ export default function Home() {
                   <p className="text-sm text-muted">{session.subtitle}</p>
                 </div>
                 <SessionStatus id={session.id} />
+                <LinkPending />
               </Link>
             </li>
           ))}
