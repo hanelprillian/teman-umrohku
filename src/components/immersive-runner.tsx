@@ -2,7 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { Dua, Session, Step } from "@/content/types";
-import { useVisibleBelowHeader } from "@/lib/hooks";
+import { usePagedSwipe, useVisibleBelowHeader } from "@/lib/hooks";
 import { useProgress } from "@/lib/progress-store";
 import { ActionButton } from "./action-button";
 import {
@@ -105,7 +105,12 @@ interface SlideEndProps {
   onComplete: () => void;
 }
 
-const SlideEnd = ({ nextSlide, gatedBy, onNext, onComplete }: SlideEndProps) => {
+const SlideEnd = ({
+  nextSlide,
+  gatedBy,
+  onNext,
+  onComplete,
+}: SlideEndProps) => {
   if (nextSlide) {
     const label = nextSlide.dua
       ? `Doa: ${nextSlide.dua.title ?? nextSlide.step.title}`
@@ -118,7 +123,8 @@ const SlideEnd = ({ nextSlide, gatedBy, onNext, onComplete }: SlideEndProps) => 
       >
         <ChevronUpIcon />
         <span className="max-w-full truncate text-sm">
-          Berikutnya: <span className="font-semibold text-foreground">{label}</span>
+          Berikutnya:{" "}
+          <span className="font-semibold text-foreground">{label}</span>
         </span>
       </button>
     );
@@ -165,7 +171,10 @@ export const ImmersiveRunner = ({ session }: { session: Session }) => {
   const fallbackPosition = slides.findLastIndex(
     (slide) => slide.stepIndex <= (progress?.stepIndex ?? 0),
   );
-  const activePosition = Math.max(0, savedPosition !== -1 ? savedPosition : fallbackPosition);
+  const activePosition = Math.max(
+    0,
+    savedPosition !== -1 ? savedPosition : fallbackPosition,
+  );
   const activeSlide = slides[activePosition];
   const activeStep = activeSlide.step;
   const activeCount = counts[activeStep.id] ?? 0;
@@ -173,11 +182,11 @@ export const ImmersiveRunner = ({ session }: { session: Session }) => {
     activeStep.counter !== undefined && activeCount < activeStep.counter.total;
 
   const slideRefs = useRef<(HTMLElement | null)[]>([]);
-  const initialPosition = useRef(activePosition);
   const [panel, setPanel] = useState<HTMLDivElement | null>(null);
   const panelVisible = useVisibleBelowHeader(panel);
   const activeIntroPosition = slides.findIndex(
-    (slide) => slide.stepIndex === activeSlide.stepIndex && slide.slideIndex === 0,
+    (slide) =>
+      slide.stepIndex === activeSlide.stepIndex && slide.slideIndex === 0,
   );
 
   const activeLaps = progress?.laps?.[activeStep.id] ?? [];
@@ -188,7 +197,11 @@ export const ImmersiveRunner = ({ session }: { session: Session }) => {
   const recordLap = () => {
     scrollPending.current = true;
     setCount(session.id, activeStep.id, activeCount + 1);
-    setLapToast({ id: Date.now(), stepId: activeStep.id, count: activeCount + 1 });
+    setLapToast({
+      id: Date.now(),
+      stepId: activeStep.id,
+      count: activeCount + 1,
+    });
   };
 
   const toast = lapToast && activeStep.counter && (
@@ -205,140 +218,124 @@ export const ImmersiveRunner = ({ session }: { session: Session }) => {
 
   useLayoutEffect(() => {
     const root = document.documentElement;
-    root.classList.add("snap-steps");
-    slideRefs.current[initialPosition.current]?.scrollIntoView({ block: "start" });
-    return () => root.classList.remove("snap-steps");
+    root.classList.add("immersive-lock");
+    return () => root.classList.remove("immersive-lock");
   }, []);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (!entry.isIntersecting) continue;
-          const element = entry.target as HTMLElement;
-          const stepIndex = Number(element.dataset.step);
-          const slideIndex = Number(element.dataset.slide);
-          const current = useProgress.getState().sessions[session.id];
-          if (current?.stepIndex !== stepIndex || current?.slideIndex !== slideIndex) {
-            setStep(session.id, stepIndex, slideIndex);
-          }
-        }
-      },
-      { rootMargin: "-40% 0px -55% 0px" },
-    );
+  const goTo = (position: number, edge: "top" | "bottom" = "top") => {
+    const target = slides[position];
+    if (!target) return;
+    const scroller = slideRefs.current[position];
+    if (scroller)
+      scroller.scrollTop = edge === "top" ? 0 : scroller.scrollHeight;
+    setStep(session.id, target.stepIndex, target.slideIndex);
+  };
 
-    slideRefs.current
-      .slice(0, slides.length)
-      .forEach((slide) => slide && observer.observe(slide));
-
-    return () => observer.disconnect();
-  }, [session.id, setStep, slides.length]);
-
-  useEffect(() => {
-    const markTall = () => {
-      const header = parseFloat(
-        getComputedStyle(document.documentElement).getPropertyValue("--header-h"),
-      ) || 0;
-      const available = window.innerHeight - header;
-      slideRefs.current.slice(0, slides.length).forEach((slide) => {
-        if (slide) slide.toggleAttribute("data-tall", slide.offsetHeight > available + 1);
-      });
-    };
-
-    const observer = new ResizeObserver(markTall);
-    slideRefs.current
-      .slice(0, slides.length)
-      .forEach((slide) => slide && observer.observe(slide));
-    window.addEventListener("resize", markTall);
-    return () => {
-      observer.disconnect();
-      window.removeEventListener("resize", markTall);
-    };
-  }, [slides.length]);
-
-  const scrollToSlide = (position: number) =>
-    slideRefs.current[position]?.scrollIntoView({ behavior: "smooth", block: "start" });
+  const [stage, setStage] = useState<HTMLDivElement | null>(null);
+  usePagedSwipe({
+    stage,
+    getScroller: () => slideRefs.current[activePosition],
+    onNext: () => goTo(activePosition + 1),
+    onPrev: () => goTo(activePosition - 1, "bottom"),
+  });
 
   useEffect(() => {
     if (!scrollPending.current) return;
     scrollPending.current = false;
-    requestAnimationFrame(() =>
-      slideRefs.current[activeIntroPosition]?.scrollIntoView({ block: "start" }),
-    );
-  }, [activeCount, activeIntroPosition]);
+    if (activePosition !== activeIntroPosition) goTo(activeIntroPosition);
+    else
+      slideRefs.current[activeIntroPosition]?.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only react to a new lap
+  }, [activeCount]);
 
   return (
-    <div className="min-h-dvh">
+    <div className="flex h-dvh flex-col overflow-hidden">
       <SessionHeader
         session={session}
         stepIndex={activeSlide.stepIndex}
         compact
       />
 
-      {slides.map((slide, position) => {
-        const { step } = slide;
-        const count = counts[step.id] ?? 0;
-        const counterPending =
-          step.counter !== undefined && count < step.counter.total;
+      <div ref={setStage} className="relative flex-1 overflow-hidden">
+        {slides.map((slide, position) => {
+          const { step } = slide;
+          const count = counts[step.id] ?? 0;
+          const counterPending =
+            step.counter !== undefined && count < step.counter.total;
+          const offset = position - activePosition;
 
-        return (
-          <section
-            key={slide.key}
-            ref={(element) => {
-              slideRefs.current[position] = element;
-            }}
-            data-step={slide.stepIndex}
-            data-slide={slide.slideIndex}
-            aria-label={
-              slide.dua
-                ? `Doa: ${slide.dua.title ?? step.title}`
-                : `Langkah ${slide.stepIndex + 1}: ${step.title}`
-            }
-            className={`snap-step mx-auto flex max-w-xl flex-col px-5 ${
-              step.counter && slide.dua ? "pt-20" : "pt-5"
-            } ${counterPending ? "pb-44" : "pb-safe"}`}
-          >
-            {slide.dua ? (
-              <DuaSlideContent slide={{ ...slide, dua: slide.dua }} />
-            ) : (
-              <div className="flex-1 space-y-6">
-                <p className="text-sm font-bold uppercase tracking-wide text-primary">
-                  Langkah {slide.stepIndex + 1} dari {steps.length}
-                </p>
-                <StepTitle step={step} />
-                {step.counter && (
-                  <div ref={step.id === activeStep.id ? setPanel : undefined}>
-                    <CounterPanel
-                      counter={step.counter}
-                      count={count}
-                      laps={progress?.laps?.[step.id] ?? []}
-                      onUndo={() =>
-                        setCount(session.id, step.id, Math.max(0, count - 1))
-                      }
-                      onExpand={() => setFocusOpen(true)}
-                    />
+          return (
+            <section
+              key={slide.key}
+              ref={(element) => {
+                slideRefs.current[position] = element;
+              }}
+              inert={offset !== 0}
+              aria-label={
+                slide.dua
+                  ? `Doa: ${slide.dua.title ?? step.title}`
+                  : `Langkah ${slide.stepIndex + 1}: ${step.title}`
+              }
+              className="absolute inset-0 overflow-y-auto overscroll-contain transition-transform duration-[400ms] ease-out motion-reduce:transition-none"
+              style={{ transform: `translateY(${offset * 100}%)` }}
+            >
+              <div
+                className={`mx-auto flex min-h-full max-w-xl flex-col px-5 ${
+                  step.counter && slide.dua ? "pt-20" : "pt-5"
+                } ${counterPending ? "pb-44" : "pb-safe"}`}
+              >
+                {slide.dua ? (
+                  <DuaSlideContent slide={{ ...slide, dua: slide.dua }} />
+                ) : (
+                  <div className="flex-1 space-y-6">
+                    <p className="text-sm font-bold uppercase tracking-wide text-primary">
+                      Langkah {slide.stepIndex + 1} dari {steps.length}
+                    </p>
+                    <StepTitle step={step} />
+                    {step.counter && (
+                      <div
+                        ref={step.id === activeStep.id ? setPanel : undefined}
+                      >
+                        <CounterPanel
+                          counter={step.counter}
+                          count={count}
+                          laps={progress?.laps?.[step.id] ?? []}
+                          onUndo={() =>
+                            setCount(
+                              session.id,
+                              step.id,
+                              Math.max(0, count - 1),
+                            )
+                          }
+                          onExpand={() => setFocusOpen(true)}
+                        />
+                      </div>
+                    )}
+                    <StepContent step={step} showDuas={false} />
                   </div>
                 )}
-                <StepContent step={step} showDuas={false} />
-              </div>
-            )}
 
-            <SlideEnd
-              nextSlide={slides[position + 1]}
-              gatedBy={gatedBy}
-              onNext={() => scrollToSlide(position + 1)}
-              onComplete={() => completeSession(session.id)}
-            />
-          </section>
-        );
-      })}
+                <SlideEnd
+                  nextSlide={slides[position + 1]}
+                  gatedBy={gatedBy}
+                  onNext={() => goTo(position + 1)}
+                  onComplete={() => completeSession(session.id)}
+                />
+              </div>
+            </section>
+          );
+        })}
+      </div>
 
       {activeStep.counter && (
         <CounterStrip
           counter={activeStep.counter}
           count={activeCount}
           visible={!panelVisible}
-          onSelect={() => scrollToSlide(activeIntroPosition)}
+          onSelect={() => goTo(activeIntroPosition)}
         />
       )}
 

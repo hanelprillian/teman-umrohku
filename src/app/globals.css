@@ -101,20 +101,11 @@ html[data-hide-dalil] .dalil-section {
   display: none;
 }
 
-/* Proximity, not mandatory: iOS Safari yanks mandatory snaps back to the top of slides taller than the screen. */
-html.snap-steps {
-  scroll-snap-type: y proximity;
-  scroll-padding-top: var(--header-h, 0px);
-}
-
-.snap-step {
-  min-height: calc(100dvh - var(--header-h, 0px));
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
-}
-
-.snap-step[data-tall] {
-  scroll-snap-stop: normal;
+/* Immersive mode pages slides itself; the document must not scroll or rubber-band. */
+html.immersive-lock,
+html.immersive-lock body {
+  overflow: hidden;
+  overscroll-behavior: none;
 }
 
 .pb-safe {
