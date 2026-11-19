@@ -143,5 +143,5 @@ export const applySettingsToDocument = ({
   else root.setAttribute("data-gender", gender);
   document
     .querySelector('meta[name="theme-color"]')
-    ?.setAttribute("content", resolved === "dark" ? "#0b1311" : "#faf7f0");
+    ?.setAttribute("content", resolved === "dark" ? "#0d0e10" : "#f8f7f4");
 };

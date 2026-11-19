@@ -55,8 +55,8 @@ const ScaleControl = ({ label, sample, scales, value, onChange }: ScaleControlPr
           {scales.map((scale, scaleIndex) => (
             <span
               key={scale}
-              className={`h-2 flex-1 rounded-full ${
-                scaleIndex <= index ? "bg-primary" : "bg-border"
+              className={`h-1.5 flex-1 rounded-full ${
+                scaleIndex <= index ? "bg-gold" : "bg-border"
               }`}
             />
           ))}
@@ -66,11 +66,11 @@ const ScaleControl = ({ label, sample, scales, value, onChange }: ScaleControlPr
           aria-label={`Perbesar ${label}`}
           disabled={index === scales.length - 1}
           onClick={() => onChange(scales[index + 1])}
-          className="flex size-12 shrink-0 items-center justify-center rounded-xl border border-border text-xl font-bold disabled:opacity-40"
+          className="flex size-11 shrink-0 items-center justify-center rounded-xl border border-border bg-background text-lg font-semibold disabled:opacity-40"
         >
           +
         </button>
-        <span className="flex w-8 justify-center text-primary" aria-hidden>
+        <span className="flex w-8 justify-center text-gold" aria-hidden>
           {sample}
         </span>
       </div>

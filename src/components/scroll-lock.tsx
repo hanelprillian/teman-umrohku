@@ -18,10 +18,10 @@ export const LockToggle = () => {
       onClick={() => setScrollLock(!scrollLock)}
       aria-pressed={scrollLock}
       aria-label={scrollLock ? "Buka kunci geser" : "Kunci geser, pakai tombol"}
-      className={`flex size-11 shrink-0 items-center justify-center rounded-full transition-colors ${
+      className={`flex size-10 shrink-0 items-center justify-center rounded-full border transition-colors ${
         scrollLock
-          ? "bg-primary text-primary-foreground"
-          : "text-muted active:bg-surface-muted"
+          ? "border-gold bg-gold-soft text-gold"
+          : "border-border bg-surface text-muted active:bg-surface-muted"
       }`}
     >
       {scrollLock ? <LockIcon className="size-5" /> : <UnlockIcon className="size-5" />}
@@ -114,11 +114,11 @@ export const ThumbPad = ({
         aria-label={pagesUp ? "Slide sebelumnya" : "Gulir ke atas"}
         className={`${buttonClass} ${
           pagesUp
-            ? "border-primary bg-primary-soft text-primary-strong"
+            ? "border-gold/50 bg-gold-soft text-gold"
             : "border-border bg-surface/95 text-foreground backdrop-blur"
         }`}
       >
-        <ChevronUpIcon className="size-8" strokeWidth={2.5} />
+        <ChevronUpIcon className="size-7" weight="bold" />
       </button>
       <button
         type="button"
@@ -131,7 +131,7 @@ export const ThumbPad = ({
             : "border-border bg-surface/95 text-foreground backdrop-blur"
         }`}
       >
-        <ChevronDownIcon className="size-8" strokeWidth={2.5} />
+        <ChevronDownIcon className="size-7" weight="bold" />
       </button>
     </div>
   );

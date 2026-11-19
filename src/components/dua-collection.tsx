@@ -56,25 +56,25 @@ export const DuaCollection = () => {
 
   return (
     <div className="space-y-8">
-      <label className="sticky top-0 z-10 -mx-4 block bg-background/95 px-4 py-3 backdrop-blur">
+      <label className="sticky top-0 z-10 -mx-5 block bg-background/95 px-5 py-3 backdrop-blur">
         <span className="sr-only">Cari doa</span>
-        <span className="flex min-h-14 items-center gap-3 rounded-2xl border border-border bg-surface px-4 focus-within:border-primary">
+        <span className="nusuk-card flex min-h-12 items-center gap-3 rounded-2xl px-4 focus-within:border-gold">
           <SearchIcon className="size-5 shrink-0 text-muted" />
           <input
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Cari: talbiyah, zamzam, shafa…"
-            className="min-w-0 flex-1 bg-transparent text-lg outline-none placeholder:text-muted [&::-webkit-search-cancel-button]:hidden"
+            className="min-w-0 flex-1 bg-transparent text-base outline-none placeholder:text-muted [&::-webkit-search-cancel-button]:hidden"
           />
           {query && (
             <button
               type="button"
               onClick={() => setQuery("")}
               aria-label="Hapus pencarian"
-              className="-mr-2 flex size-10 items-center justify-center rounded-full text-muted active:bg-surface-muted"
+              className="-mr-1.5 flex size-9 items-center justify-center rounded-full text-muted active:bg-surface-muted"
             >
-              <CloseIcon className="size-5" />
+              <CloseIcon className="size-4" />
             </button>
           )}
         </span>
@@ -88,7 +88,7 @@ export const DuaCollection = () => {
 
       {results.map(({ session, entries }) => (
         <section key={session.id}>
-          <h2 className="font-display mb-3 text-xl text-foreground">
+          <h2 className="mb-3 text-base font-semibold text-foreground">
             {session.title}
           </h2>
           <div className="space-y-5">

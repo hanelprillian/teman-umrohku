@@ -38,11 +38,18 @@ const OnboardingSheet = () => {
         </div>
 
         <div className="mb-6">
-          <p className="font-display text-lg text-primary">Teman Umrohku</p>
-          <h1 id="onboarding-title" className="font-display text-4xl leading-tight">
+          <span className="inline-block rounded-full bg-gold-soft px-3 py-1 text-xs font-medium text-gold">
+            Teman Umrohku
+          </span>
+          <h1
+            id="onboarding-title"
+            className="mt-3 text-3xl font-semibold leading-tight tracking-tight"
+          >
             Biar pas di tanganmu
           </h1>
-          <p className="mt-2 text-muted">Empat pilihan. Bisa diubah nanti di Pengaturan.</p>
+          <p className="mt-2 text-sm text-muted">
+            Empat pilihan singkat. Bisa diubah kapan saja di Pengaturan.
+          </p>
         </div>
 
         <div className="flex-1">

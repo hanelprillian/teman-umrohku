@@ -65,27 +65,31 @@ const DuaSlideContent = ({ slide }: { slide: Slide & { dua: Dua } }) => {
     <>
       <div className="flex flex-1 flex-col justify-center gap-6 py-4">
         <div className="space-y-2">
-          <p className="font-display text-sm text-primary">
+          <p className="text-xs font-medium text-gold">
             {step.title}
             {total > 1 && ` · Doa ${slideIndex} dari ${total}`}
           </p>
-          {dua.title && <p className="font-semibold text-muted">{dua.title}</p>}
+          {dua.title && (
+            <p className="font-semibold text-foreground">{dua.title}</p>
+          )}
           {dua.repeat && (
-            <span className="inline-block rounded-full bg-accent-soft px-3 py-1 text-sm font-semibold text-accent">
+            <span className="inline-block rounded-full bg-gold-soft px-3 py-1 text-xs font-medium text-gold">
               {dua.repeat}
             </span>
           )}
         </div>
-        <p dir="rtl" lang="ar" className="text-arabic-lg text-right">
+        <p dir="rtl" lang="ar" className="text-arabic-lg text-right text-foreground">
           {dua.arabic}
         </p>
-        <p className="latin-text text-reading-lg font-medium italic text-primary-strong">
+        <p className="latin-text text-reading-lg font-medium italic text-gold">
           {dua.latin}
         </p>
-        <p className="translation-text text-reading-lg">“{dua.translation}”</p>
+        <p className="translation-text text-reading-lg text-muted">
+          “{dua.translation}”
+        </p>
       </div>
 
-      <details className="dalil-section group rounded-2xl border border-border bg-surface">
+      <details className="dalil-section nusuk-card group rounded-[20px]">
         <summary className="flex cursor-pointer items-center gap-3 px-4 py-3">
           <span className="min-w-0 flex-1 truncate text-sm text-muted">
             {firstDalil.source}
@@ -314,7 +318,7 @@ export const ImmersiveRunner = ({ session }: { session: Session }) => {
                   <DuaSlideContent slide={{ ...slide, dua: slide.dua }} />
                 ) : (
                   <div className="flex-1 space-y-6">
-                    <p className="font-display text-sm text-primary">
+                    <p className="text-xs font-medium text-gold">
                       Langkah {slide.stepIndex + 1} dari {steps.length}
                     </p>
                     <StepTitle step={step} />

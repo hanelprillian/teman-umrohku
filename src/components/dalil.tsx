@@ -1,11 +1,26 @@
 import type { Dalil, DalilStatus } from "@/content/types";
 
 const statusStyles: Record<DalilStatus, { label: string; className: string }> = {
-  quran: { label: "Al-Qur'an", className: "bg-primary text-primary-foreground" },
-  shahih: { label: "Shahih", className: "bg-primary-soft text-primary-strong" },
-  hasan: { label: "Hasan", className: "bg-primary-soft text-primary-strong" },
-  atsar: { label: "Atsar Sahabat", className: "bg-accent-soft text-accent" },
-  ijma: { label: "Ijma' Ulama", className: "bg-primary-soft text-primary-strong" },
+  quran: {
+    label: "Al-Qur'an",
+    className: "bg-kiswah text-gold-bright border border-gold/30",
+  },
+  shahih: {
+    label: "Shahih",
+    className: "bg-rawdah-soft text-rawdah",
+  },
+  hasan: {
+    label: "Hasan",
+    className: "bg-rawdah-soft text-rawdah",
+  },
+  atsar: {
+    label: "Atsar Sahabat",
+    className: "bg-gold-soft text-gold",
+  },
+  ijma: {
+    label: "Ijma' Ulama",
+    className: "bg-gold-soft text-gold",
+  },
   diperselisihkan: {
     label: "Diperselisihkan",
     className: "bg-danger-soft text-danger",
@@ -16,7 +31,7 @@ export const StatusBadge = ({ status }: { status: DalilStatus }) => {
   const { label, className } = statusStyles[status];
   return (
     <span
-      className={`inline-flex shrink-0 items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${className}`}
+      className={`inline-flex shrink-0 items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${className}`}
     >
       {label}
     </span>
@@ -39,11 +54,11 @@ const DalilItem = ({ dalil }: { dalil: Dalil }) => {
       <details className="group">
         <summary className="cursor-pointer">
           {header}
-          <span className="mt-1 inline-block text-xs font-semibold text-primary group-open:hidden">
+          <span className="mt-1 inline-block text-xs font-medium text-gold group-open:hidden">
             Lihat keterangan
           </span>
         </summary>
-        <div className="mt-2 space-y-2 border-l-2 border-primary/40 pl-3 text-sm leading-relaxed">
+        <div className="mt-2 space-y-2 border-l-2 border-gold/45 pl-3 text-sm leading-relaxed">
           {dalil.quote && <p className="italic">“{dalil.quote}”</p>}
           {dalil.note && <p className="text-muted">{dalil.note}</p>}
         </div>

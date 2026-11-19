@@ -12,18 +12,18 @@ export const TipList = ({ tips }: { tips: Tip[] }) => (
       <li
         key={tip.text}
         data-audience={tip.audience}
-        className={`flex gap-3 rounded-xl px-4 py-3 text-reading ${
+        className={`flex gap-3 rounded-2xl border px-4 py-3.5 text-reading ${
           tip.warning
-            ? "bg-accent-soft text-foreground"
-            : "bg-surface-muted text-foreground"
+            ? "border-gold/35 bg-gold-soft/75 text-foreground"
+            : "border-border bg-surface text-foreground"
         }`}
       >
         {tip.warning && (
-          <AlertIcon className="mt-1 size-5 shrink-0 text-accent" />
+          <AlertIcon className="mt-1 size-5 shrink-0 text-gold" />
         )}
         <div>
           {tip.audience && (
-            <span className="audience-prefix mr-2 inline-block align-[2px] text-xs font-medium text-primary-strong">
+            <span className="audience-prefix mr-2 inline-block rounded-full bg-gold-soft px-2 py-0.5 align-[1px] text-xs font-medium text-gold">
               {audienceLabel[tip.audience]}
             </span>
           )}
