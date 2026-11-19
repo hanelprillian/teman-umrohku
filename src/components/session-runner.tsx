@@ -41,14 +41,16 @@ const CompletedView = ({
   onRepeat,
 }: SessionRunnerProps & { onRepeat: () => void }) => (
   <main className="mx-auto flex min-h-dvh max-w-xl flex-col items-center justify-center gap-6 px-6 py-10 text-center">
-    <div className="flex size-20 items-center justify-center rounded-full bg-primary text-primary-foreground">
-      <CheckIcon className="size-10" />
+    <div className="flex size-20 items-center justify-center rounded-full border border-rawdah/25 bg-rawdah-soft text-rawdah">
+      <CheckIcon className="size-9" />
     </div>
     <div>
-      <p className="text-sm font-medium text-muted">
+      <span className="inline-block rounded-full bg-gold-soft px-3 py-1 text-xs font-medium text-gold">
         Sesi selesai
-      </p>
-      <h1 className="mt-1 text-3xl font-extrabold">{session.title}</h1>
+      </span>
+      <h1 className="mt-3 text-3xl font-semibold tracking-tight">
+        {session.title}
+      </h1>
       <p className="mt-2 text-reading text-muted">
         Alhamdulillah. Semoga Allah menerima ibadahmu.
       </p>
@@ -57,7 +59,7 @@ const CompletedView = ({
       {nextSession ? (
         <Link
           href={`/sesi/${nextSession.id}/`}
-          className="relative flex min-h-16 items-center justify-center gap-2 rounded-2xl bg-primary px-5 text-lg font-bold text-primary-foreground"
+          className="relative flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-primary px-5 text-base font-semibold text-primary-foreground shadow-sm"
         >
           Lanjut: {nextSession.title}
           <ArrowRightIcon className="size-5" />
@@ -66,7 +68,7 @@ const CompletedView = ({
       ) : (
         <Link
           href="/"
-          className="relative flex min-h-16 items-center justify-center rounded-2xl bg-primary px-5 text-lg font-bold text-primary-foreground"
+          className="relative flex min-h-14 items-center justify-center rounded-2xl bg-primary px-5 text-base font-semibold text-primary-foreground shadow-sm"
         >
           Kembali ke beranda
           <LinkPending />
@@ -74,14 +76,14 @@ const CompletedView = ({
       )}
       <ActionButton
         onAction={onRepeat}
-        className="flex min-h-14 items-center justify-center rounded-2xl border border-border font-semibold text-muted"
+        className="flex min-h-12 items-center justify-center rounded-2xl border border-border bg-surface text-sm font-medium text-muted active:bg-surface-muted"
       >
         Ulangi sesi ini
       </ActionButton>
       {nextSession && (
         <Link
           href="/"
-          className="relative bg-background py-2 font-semibold text-muted underline"
+          className="relative bg-background py-2 text-sm font-medium text-muted underline underline-offset-4"
         >
           Ke beranda
           <LinkPending />

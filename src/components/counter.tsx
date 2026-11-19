@@ -11,7 +11,10 @@ const TAP_LOCK_MS = 2000;
 const MOUNT_GUARD_MS = 700;
 const UNDO_TOAST_MS = 5000;
 
-const timeFormat = new Intl.DateTimeFormat("id-ID", { hour: "2-digit", minute: "2-digit" });
+const timeFormat = new Intl.DateTimeFormat("id-ID", {
+  hour: "2-digit",
+  minute: "2-digit",
+});
 const formatTime = (time: number) => (time ? timeFormat.format(time) : "—");
 const formatMinutes = (ms: number) => {
   const minutes = Math.floor(ms / 60_000);
@@ -25,7 +28,10 @@ const currentRound = (counter: Counter, count: number) =>
  * Full-screen counter state. With the auto setting on, it opens on every step
  * whose counter is still pending until the user closes it for that step.
  */
-export const useCounterFocus = (stepId: string | undefined, pending: boolean) => {
+export const useCounterFocus = (
+  stepId: string | undefined,
+  pending: boolean,
+) => {
   const autoFocusCounter = useSettings((s) => s.autoFocusCounter);
   const [manual, setManual] = useState(false);
   const [dismissedFor, setDismissedFor] = useState<string | null>(null);
@@ -42,7 +48,10 @@ export const useCounterFocus = (stepId: string | undefined, pending: boolean) =>
   };
 };
 
-const audienceLabel: Record<Audience, string> = { pria: "Pria", wanita: "Wanita" };
+const audienceLabel: Record<Audience, string> = {
+  pria: "Pria",
+  wanita: "Wanita",
+};
 
 /** Gender-specific hints are hidden via CSS (`data-audience`) per the personalization setting. */
 const RoundHints = ({
@@ -63,11 +72,15 @@ const RoundHints = ({
           key={`${hint.audience}-${hint.text}`}
           data-audience={hint.audience}
           className={
-            truncate ? "inline [&:not(:first-child)]:before:content-['_·_']" : "block"
+            truncate
+              ? "inline [&:not(:first-child)]:before:content-['_·_']"
+              : "block"
           }
         >
           {hint.audience && (
-            <span className="audience-prefix">{audienceLabel[hint.audience]}: </span>
+            <span className="audience-prefix">
+              {audienceLabel[hint.audience]}:{" "}
+            </span>
           )}
           {hint.text}
         </span>
@@ -80,43 +93,73 @@ const RoundDots = ({
   counter,
   count,
   large = false,
+  onKiswah = false,
 }: {
   counter: Counter;
   count: number;
   large?: boolean;
+  onKiswah?: boolean;
 }) => (
-  <ol className={`flex justify-between ${large ? "gap-2" : "gap-1.5"}`} aria-hidden>
+  <ol
+    className={`flex justify-between ${large ? "gap-2" : "gap-1.5"}`}
+    aria-hidden
+  >
     {counter.rounds.map((round, index) => {
       const isDone = index < count;
       const isCurrent = index === count;
       return (
         <li
           key={`${round.label}-${index}`}
-          className={`flex aspect-square flex-1 items-center justify-center rounded-full font-bold transition-colors ${
+          className={`flex aspect-square flex-1 items-center justify-center rounded-full font-semibold transition-colors ${
             large ? "text-lg" : "text-sm"
           } ${
             isDone
-              ? "bg-primary text-primary-foreground"
+              ? onKiswah
+                ? "bg-gold-bright text-[#14130f]"
+                : "bg-gold text-white dark:text-[#13110c]"
               : isCurrent
-                ? "border-2 border-primary text-primary"
-                : "border border-border text-muted"
+                ? onKiswah
+                  ? "border-2 border-gold-bright bg-gold-bright/15 text-gold-bright"
+                  : "border-2 border-gold bg-gold-soft text-gold"
+                : onKiswah
+                  ? "border border-white/15 text-kiswah-muted"
+                  : "border border-border text-muted"
           }`}
         >
-          {isDone ? <CheckIcon className={large ? "size-5" : "size-4"} /> : index + 1}
+          {isDone ? (
+            <CheckIcon className={large ? "size-5" : "size-3.5"} />
+          ) : (
+            index + 1
+          )}
         </li>
       );
     })}
   </ol>
 );
 
-const LastLap = ({ laps, className = "" }: { laps: number[]; className?: string }) => {
+const LastLap = ({
+  laps,
+  className = "",
+  onKiswah = false,
+}: {
+  laps: number[];
+  className?: string;
+  onKiswah?: boolean;
+}) => {
   const now = useNow(30_000);
   const last = laps.at(-1);
   if (!last) return null;
 
   return (
-    <p className={`text-sm text-muted ${className}`}>
-      Terakhir tercatat <span className="font-semibold text-foreground">{formatTime(last)}</span>
+    <p
+      className={`text-xs ${onKiswah ? "text-kiswah-muted" : "text-muted"} ${className}`}
+    >
+      Terakhir tercatat{" "}
+      <span
+        className={`font-semibold ${onKiswah ? "text-kiswah-fg" : "text-foreground"}`}
+      >
+        {formatTime(last)}
+      </span>
       {" · "}
       {formatMinutes(now - last)} lalu
     </p>
@@ -126,23 +169,26 @@ const LastLap = ({ laps, className = "" }: { laps: number[]; className?: string 
 const LapHistory = ({ counter, laps }: { counter: Counter; laps: number[] }) => (
   <details className="group mt-4">
     <summary className="flex cursor-pointer items-center justify-between gap-3">
-      <LastLap laps={laps} />
-      <span className="shrink-0 text-sm font-semibold text-primary group-open:hidden">
+      <LastLap laps={laps} onKiswah />
+      <span className="shrink-0 text-xs font-medium text-gold-bright group-open:hidden">
         Riwayat
       </span>
     </summary>
-    <ol className="mt-3 space-y-1.5 text-sm">
+    <ol className="mt-3 space-y-1.5 rounded-2xl border border-white/10 bg-white/5 p-3 text-sm text-kiswah-fg">
       {laps.map((time, index) => {
         const previous = laps[index - 1];
         return (
           <li key={index} className="flex justify-between gap-3">
-            <span className="capitalize text-muted">
+            <span className="capitalize text-kiswah-muted">
               {counter.unit} {index + 1}
             </span>
             <span className="tabular-nums">
               {formatTime(time)}
               {previous > 0 && time > 0 && (
-                <span className="text-muted"> ({formatMinutes(time - previous)})</span>
+                <span className="text-kiswah-muted">
+                  {" "}
+                  ({formatMinutes(time - previous)})
+                </span>
               )}
             </span>
           </li>
@@ -160,32 +206,40 @@ interface CounterPanelProps {
   onExpand: () => void;
 }
 
-export const CounterPanel = ({ counter, count, laps, onUndo, onExpand }: CounterPanelProps) => {
+export const CounterPanel = ({
+  counter,
+  count,
+  laps,
+  onUndo,
+  onExpand,
+}: CounterPanelProps) => {
   const done = count >= counter.total;
   const current = currentRound(counter, count);
 
   return (
     <section
       aria-label={`Penghitung ${counter.unit}`}
-      className="rounded-3xl border border-border bg-surface p-5 shadow-sm"
+      className="nusuk-kiswah overflow-hidden rounded-[24px] p-5"
     >
       <div className="flex items-center justify-between gap-4">
         <div aria-live="polite">
           <p
             key={count}
-            className="animate-pop text-5xl font-extrabold tabular-nums text-primary"
+            className="animate-pop text-5xl font-semibold tracking-tight tabular-nums text-gold-bright"
           >
             {count}
-            <span className="text-2xl font-bold text-muted">/{counter.total}</span>
+            <span className="text-2xl font-medium text-kiswah-muted">
+              /{counter.total}
+            </span>
           </p>
-          <p className="mt-1 text-sm font-medium text-muted">
+          <p className="mt-1 text-xs font-medium text-kiswah-muted">
             {counter.unit} selesai
           </p>
         </div>
         {count > 0 && (
           <ActionButton
             onAction={onUndo}
-            className="flex min-h-10 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-border px-3.5 py-2 text-sm font-semibold text-muted active:bg-surface-muted"
+            className="flex min-h-10 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-white/15 bg-white/6 px-3.5 py-2 text-xs font-medium text-kiswah-fg transition-colors active:bg-white/12"
           >
             <UndoIcon className="size-4" />
             Batalkan 1
@@ -194,25 +248,23 @@ export const CounterPanel = ({ counter, count, laps, onUndo, onExpand }: Counter
       </div>
 
       <div className="mt-5">
-        <RoundDots counter={counter} count={count} />
+        <RoundDots counter={counter} count={count} onKiswah />
       </div>
 
-      <div className="mt-5 rounded-2xl bg-primary-soft px-4 py-3">
+      <div className="mt-5 rounded-2xl border border-gold-bright/20 bg-white/6 px-4 py-3.5">
         {done ? (
-          <p className="text-lg font-bold text-primary-strong">
+          <p className="text-base font-semibold text-gold-bright">
             Alhamdulillah, {counter.total} {counter.unit} selesai
           </p>
         ) : (
           <>
-            <p className="text-xs font-medium text-primary-strong/80">
-              Sekarang
-            </p>
-            <p className="text-xl font-bold text-primary-strong">
+            <p className="text-xs font-medium text-gold-bright/90">Sekarang</p>
+            <p className="mt-0.5 text-xl font-semibold text-kiswah-fg">
               {current.label}
             </p>
             <RoundHints
               hints={current.hints}
-              className="mt-0.5 text-sm font-medium text-primary-strong/90"
+              className="mt-0.5 text-sm text-kiswah-muted"
             />
           </>
         )}
@@ -224,9 +276,10 @@ export const CounterPanel = ({ counter, count, laps, onUndo, onExpand }: Counter
         <button
           type="button"
           onClick={onExpand}
-          className="mt-4 flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl border border-border font-semibold active:bg-surface-muted"
+          className="mt-4 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/5 text-sm font-medium text-kiswah-fg transition-colors active:bg-white/12"
         >
-          <ExpandIcon className="size-5" /> Mode hitung layar penuh
+          <ExpandIcon className="size-4 text-gold-bright" /> Mode hitung layar
+          penuh
         </button>
       )}
     </section>
@@ -240,7 +293,12 @@ interface CounterStripProps {
   onSelect: () => void;
 }
 
-export const CounterStrip = ({ counter, count, visible, onSelect }: CounterStripProps) => {
+export const CounterStrip = ({
+  counter,
+  count,
+  visible,
+  onSelect,
+}: CounterStripProps) => {
   const done = count >= counter.total;
   const current = currentRound(counter, count);
 
@@ -258,18 +316,24 @@ export const CounterStrip = ({ counter, count, visible, onSelect }: CounterStrip
         type="button"
         tabIndex={visible ? 0 : -1}
         onClick={onSelect}
-        className="mx-auto flex w-full max-w-xl items-center gap-3 border-b border-border bg-surface/95 px-4 py-2.5 text-left shadow-sm backdrop-blur"
+        className="mx-auto flex w-full max-w-xl items-center gap-3 border-b border-border bg-surface/95 px-4 py-2.5 text-left shadow-xs backdrop-blur"
       >
-        <span className="text-2xl font-extrabold tabular-nums text-primary">
+        <span className="text-2xl font-semibold tabular-nums text-gold">
           {count}
-          <span className="text-base font-bold text-muted">/{counter.total}</span>
+          <span className="text-sm font-medium text-muted">
+            /{counter.total}
+          </span>
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block truncate text-sm font-bold">
+          <span className="block truncate text-sm font-semibold text-foreground">
             {done ? `${counter.total} ${counter.unit} selesai` : current.label}
           </span>
           {!done && (
-            <RoundHints hints={current.hints} className="text-xs text-muted" truncate />
+            <RoundHints
+              hints={current.hints}
+              className="text-xs text-muted"
+              truncate
+            />
           )}
         </span>
         <span className="flex gap-1" aria-hidden>
@@ -278,9 +342,9 @@ export const CounterStrip = ({ counter, count, visible, onSelect }: CounterStrip
               key={`${round.label}-${index}`}
               className={`size-2.5 rounded-full ${
                 index < count
-                  ? "bg-primary"
+                  ? "bg-gold"
                   : index === count
-                    ? "border-2 border-primary"
+                    ? "border-2 border-gold"
                     : "bg-border"
               }`}
             />
@@ -327,24 +391,30 @@ export const CounterTapButton = ({
       type="button"
       onClick={handleTap}
       disabled={locked}
-      className={`flex w-full flex-col items-center justify-center rounded-2xl px-4 text-center shadow-lg transition-[transform,background-color] active:scale-[0.98] ${
-        large ? "min-h-[38dvh] rounded-3xl py-3" : "min-h-16 py-2"
+      className={`flex w-full flex-col items-center justify-center rounded-2xl px-4 text-center shadow-md transition-[transform,background-color] active:scale-[0.985] ${
+        large ? "min-h-[38dvh] rounded-[28px] py-3" : "min-h-16 py-2.5"
       } ${
         locked
-          ? "bg-primary-soft text-primary-strong"
+          ? "border border-rawdah/30 bg-rawdah-soft text-rawdah"
           : "bg-primary text-primary-foreground"
       }`}
     >
       {locked ? (
-        <span className={`flex items-center gap-2 font-bold ${large ? "text-3xl" : "text-lg"}`}>
+        <span
+          className={`flex items-center gap-2 font-semibold ${large ? "text-3xl" : "text-lg"}`}
+        >
           <CheckIcon className={large ? "size-8" : "size-5"} /> Tercatat
         </span>
       ) : (
         <>
-          <span className={`font-extrabold leading-tight ${large ? "text-3xl" : "text-lg"}`}>
+          <span
+            className={`font-semibold leading-tight ${large ? "text-3xl" : "text-base"}`}
+          >
             Selesai {counter.unit} ke-{count + 1}
           </span>
-          <span className={`font-medium opacity-90 ${large ? "mt-1 text-lg" : "text-xs"}`}>
+          <span
+            className={`opacity-80 ${large ? "mt-1.5 text-base" : "mt-0.5 text-xs"}`}
+          >
             Tekan saat: {counter.tapLabel}
           </span>
         </>
@@ -381,20 +451,22 @@ export const UndoToast = ({ message, onUndo, onDismiss }: UndoToastProps) => {
   return (
     <div
       role="status"
-      className="relative flex items-center gap-3 overflow-hidden rounded-2xl bg-foreground py-2 pl-4 pr-2 text-background shadow-lg"
+      className="relative flex items-center gap-3 overflow-hidden rounded-2xl border border-gold-bright/25 bg-kiswah py-2 pl-4 pr-2 text-kiswah-fg shadow-lg"
     >
-      <CheckIcon className="size-5 shrink-0" />
-      <p className="min-w-0 flex-1 font-semibold first-letter:uppercase">{message}</p>
+      <CheckIcon className="size-4 shrink-0 text-gold-bright" />
+      <p className="min-w-0 flex-1 text-sm font-medium first-letter:uppercase">
+        {message}
+      </p>
       <button
         type="button"
         onClick={onUndo}
-        className="flex min-h-11 shrink-0 items-center gap-1.5 rounded-xl bg-background px-3 font-bold text-foreground active:opacity-80"
+        className="flex min-h-10 shrink-0 items-center gap-1.5 rounded-xl bg-white/10 px-3 text-sm font-semibold text-gold-bright active:bg-white/20"
       >
         <UndoIcon className="size-4" /> Batalkan
       </button>
       <span
         aria-hidden
-        className="animate-toast-timer absolute inset-x-0 bottom-0 h-1 origin-left bg-primary"
+        className="animate-toast-timer absolute inset-x-0 bottom-0 h-0.5 origin-left bg-gold-bright"
         style={{ animationDuration: `${UNDO_TOAST_MS}ms` }}
       />
     </div>
@@ -440,11 +512,13 @@ export const CounterFocus = ({
       className="pt-safe fixed inset-0 z-50 flex flex-col bg-background"
     >
       <div className="mx-auto flex w-full max-w-xl items-center gap-3 px-4 py-3">
-        <p className="min-w-0 flex-1 truncate font-semibold text-muted">{title}</p>
+        <p className="min-w-0 flex-1 truncate text-sm font-medium text-muted">
+          {title}
+        </p>
         <button
           type="button"
           onClick={onClose}
-          className="min-h-11 shrink-0 rounded-full border border-border px-4 font-semibold active:bg-surface-muted"
+          className="min-h-10 shrink-0 rounded-full border border-border bg-surface px-4 text-sm font-medium active:bg-surface-muted"
         >
           Tutup
         </button>
@@ -454,20 +528,27 @@ export const CounterFocus = ({
         <p
           key={count}
           aria-live="polite"
-          className="animate-pop text-[7rem] font-extrabold leading-none tabular-nums text-primary"
+          className="animate-pop text-[7rem] font-semibold leading-none tracking-tight tabular-nums text-gold"
         >
           {count}
-          <span className="text-5xl font-bold text-muted">/{counter.total}</span>
+          <span className="text-5xl font-medium text-muted">
+            /{counter.total}
+          </span>
         </p>
         <RoundDots counter={counter} count={count} large />
         {done ? (
-          <p className="text-2xl font-bold text-primary-strong">
+          <p className="text-2xl font-semibold text-rawdah">
             Alhamdulillah, {counter.total} {counter.unit} selesai
           </p>
         ) : (
           <div>
-            <p className="text-3xl font-extrabold">{current.label}</p>
-            <RoundHints hints={current.hints} className="mt-1 text-lg text-muted" />
+            <p className="text-3xl font-semibold tracking-tight">
+              {current.label}
+            </p>
+            <RoundHints
+              hints={current.hints}
+              className="mt-1 text-base text-muted"
+            />
           </div>
         )}
         <LastLap laps={laps} />
@@ -479,9 +560,9 @@ export const CounterFocus = ({
           <button
             type="button"
             onClick={onClose}
-            className="flex min-h-20 w-full items-center justify-center rounded-3xl bg-primary text-xl font-bold text-primary-foreground"
+            className="flex min-h-16 w-full items-center justify-center rounded-2xl bg-primary text-lg font-semibold text-primary-foreground"
           >
-            Tutup & lanjutkan
+            Tutup &amp; lanjutkan
           </button>
         ) : (
           <CounterTapButton counter={counter} count={count} onTap={onTap} large />

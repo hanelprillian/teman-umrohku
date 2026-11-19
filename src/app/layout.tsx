@@ -1,9 +1,25 @@
 import type { Metadata, Viewport } from "next";
-import { Scheherazade_New } from "next/font/google";
+import {
+  IBM_Plex_Sans_Arabic,
+  Plus_Jakarta_Sans,
+  Scheherazade_New,
+} from "next/font/google";
 import { ServiceWorkerRegister } from "@/components/service-worker-register";
 import { SettingsSync } from "@/components/settings-sync";
 import { settingsInlineScript } from "@/lib/settings-store";
 import "./globals.css";
+
+const jakarta = Plus_Jakarta_Sans({
+  variable: "--font-jakarta",
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "500", "600", "700"],
+});
+
+const ibmArabic = IBM_Plex_Sans_Arabic({
+  variable: "--font-ibm-arabic",
+  subsets: ["arabic"],
+  weight: ["400", "500", "600"],
+});
 
 const scheherazade = Scheherazade_New({
   variable: "--font-scheherazade",
@@ -28,7 +44,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f6f5f2",
+  themeColor: "#f8f7f4",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -40,7 +56,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="id"
       data-theme="light"
       suppressHydrationWarning
-      className={`${scheherazade.variable} h-full antialiased`}
+      className={`${jakarta.variable} ${ibmArabic.variable} ${scheherazade.variable} h-full antialiased`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: settingsInlineScript }} />

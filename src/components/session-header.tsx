@@ -31,15 +31,15 @@ export const SessionHeader = ({
     >
       <div
         className={`mx-auto flex max-w-xl items-center gap-3 px-4 ${
-          compact ? "py-1.5" : "py-3"
+          compact ? "py-2" : "py-3"
         }`}
       >
         <Link
           href="/"
           aria-label="Kembali ke beranda"
-          className="relative -ml-2 flex size-11 items-center justify-center rounded-full bg-background active:bg-surface-muted"
+          className="relative flex size-10 items-center justify-center rounded-full border border-border bg-surface text-foreground active:bg-surface-muted"
         >
-          <ArrowLeftIcon className="size-6" />
+          <ArrowLeftIcon className="size-5" />
           <LinkPending />
         </Link>
         {compact ? (
@@ -52,8 +52,10 @@ export const SessionHeader = ({
           </p>
         ) : (
           <div className="min-w-0 flex-1">
-            <p className="truncate text-lg font-bold leading-tight">{session.title}</p>
-            <p className="text-sm text-muted">
+            <p className="truncate text-base font-semibold leading-tight">
+              {session.title}
+            </p>
+            <p className="text-xs text-muted">
               Langkah {stepIndex + 1} dari {session.steps.length}
             </p>
           </div>
@@ -61,12 +63,14 @@ export const SessionHeader = ({
         {actions}
         <IhramRulesButton variant={compact ? "icon" : "pill"} />
       </div>
-      <div className={`mx-auto flex max-w-xl gap-1 px-4 ${compact ? "pb-2" : "pb-3"}`}>
+      <div
+        className={`mx-auto flex max-w-xl gap-1.5 px-4 ${compact ? "pb-2" : "pb-3"}`}
+      >
         {session.steps.map((s, index) => (
           <span
             key={s.id}
             className={`flex-1 rounded-full transition-colors ${compact ? "h-1" : "h-1.5"} ${
-              index <= stepIndex ? "bg-primary" : "bg-border"
+              index <= stepIndex ? "bg-gold" : "bg-border"
             }`}
           />
         ))}

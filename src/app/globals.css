@@ -3,38 +3,75 @@
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 :root {
-  --background: #f6f5f2;
-  --surface: #fffcf8;
-  --surface-muted: #eeece7;
-  --foreground: #1c1b19;
-  --muted: #625f59;
-  --border: #e3e0d8;
-  --primary: #1b6b45;
-  --primary-strong: #124c31;
-  --primary-soft: #e4f0e8;
-  --primary-foreground: #f7faf7;
-  --accent: #8a4b12;
-  --accent-soft: #f6ecdf;
-  --danger-soft: #fdecec;
-  --danger: #b42318;
+  /* Makkah Alabaster & Nusuk Gold (Light) */
+  --background: #f8f7f4;
+  --surface: #ffffff;
+  --surface-muted: #f1efe9;
+  --foreground: #1b1d20;
+  --muted: #606770;
+  --border: #e7e3d9;
+
+  /* Nusuk Signature Gold (#B49641 tuned for AA contrast on white) */
+  --gold: #9c7e2c;
+  --gold-bright: #c5a54d;
+  --gold-soft: #f6f0df;
+
+  /* Primary interactive surface: Kiswah Obsidian in light mode */
+  --primary: #1a1c1f;
+  --primary-strong: #0e1012;
+  --primary-soft: #efede6;
+  --primary-foreground: #faf9f5;
+
+  /* Rawdah Emerald (strictly for completed / shahih verification) */
+  --rawdah: #1c6b4f;
+  --rawdah-soft: #e6f3ed;
+
+  /* Semantic accents */
+  --accent: #9c7e2c;
+  --accent-soft: #f6f0df;
+  --danger: #b5342a;
+  --danger-soft: #fceceb;
+
+  /* Kiswah Hero Card (always serene obsidian + gold) */
+  --kiswah: #151618;
+  --kiswah-elevated: #202226;
+  --kiswah-fg: #f7f5ef;
+  --kiswah-muted: #a6aab0;
+
   --font-scale: 1;
 }
 
 [data-theme="dark"] {
-  --background: #121311;
-  --surface: #1b1c19;
-  --surface-muted: #242520;
-  --foreground: #f2f0ea;
-  --muted: #a8a49b;
-  --border: #2e2f2a;
-  --primary: #8fceab;
-  --primary-strong: #b7e2c8;
-  --primary-soft: #1c2c24;
-  --primary-foreground: #102116;
-  --accent: #e2b07a;
-  --accent-soft: #2a2218;
-  --danger-soft: #2f1615;
-  --danger: #f4877e;
+  /* Kiswah Obsidian & Luminous Gold (Dark) */
+  --background: #0d0e10;
+  --surface: #16171a;
+  --surface-muted: #202226;
+  --foreground: #f4f2ec;
+  --muted: #989da6;
+  --border: #26282d;
+
+  --gold: #d4b55f;
+  --gold-bright: #e3c878;
+  --gold-soft: #252014;
+
+  /* Luminous Nusuk Gold primary in dark mode */
+  --primary: #d4b55f;
+  --primary-strong: #e3c878;
+  --primary-soft: #241f14;
+  --primary-foreground: #13110c;
+
+  --rawdah: #4cc395;
+  --rawdah-soft: #12261e;
+
+  --accent: #d4b55f;
+  --accent-soft: #252014;
+  --danger: #f08076;
+  --danger-soft: #2c1615;
+
+  --kiswah: #16171a;
+  --kiswah-elevated: #202226;
+  --kiswah-fg: #f5f3ed;
+  --kiswah-muted: #989da6;
 }
 
 @theme inline {
@@ -44,17 +81,26 @@
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
   --color-border: var(--border);
+  --color-gold: var(--gold);
+  --color-gold-bright: var(--gold-bright);
+  --color-gold-soft: var(--gold-soft);
   --color-primary: var(--primary);
   --color-primary-strong: var(--primary-strong);
   --color-primary-soft: var(--primary-soft);
   --color-primary-foreground: var(--primary-foreground);
+  --color-rawdah: var(--rawdah);
+  --color-rawdah-soft: var(--rawdah-soft);
   --color-accent: var(--accent);
   --color-accent-soft: var(--accent-soft);
   --color-danger: var(--danger);
   --color-danger-soft: var(--danger-soft);
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-display: "Iowan Old Style", "Palatino Linotype", Palatino, "New York", Georgia, serif;
-  --font-arabic: var(--font-scheherazade);
+  --color-kiswah: var(--kiswah);
+  --color-kiswah-elevated: var(--kiswah-elevated);
+  --color-kiswah-fg: var(--kiswah-fg);
+  --color-kiswah-muted: var(--kiswah-muted);
+
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-arabic: var(--font-scheherazade), var(--font-ibm-arabic), serif;
 }
 
 /*
@@ -77,6 +123,7 @@ html {
 
 body {
   -webkit-tap-highlight-color: transparent;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
 
 button,
@@ -84,32 +131,51 @@ a {
   touch-action: manipulation;
 }
 
-/* rem already includes --font-scale, so Arabic divides it out to scale independently. */
-.font-display {
-  font-family: var(--font-display);
-  letter-spacing: -0.02em;
+/* Nusuk-inspired Kiswah obsidian surface with whisper-thin geometric lattice & Noor glow */
+.nusuk-kiswah {
+  position: relative;
+  background-color: var(--kiswah);
+  color: var(--kiswah-fg);
+  background-image:
+    radial-gradient(circle at 90% 8%, rgba(212, 181, 95, 0.22) 0%, rgba(212, 181, 95, 0) 56%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64' fill='none'%3E%3Cpath d='M32 6L39.5 24.5L58 32L39.5 39.5L32 58L24.5 39.5L6 32L24.5 24.5L32 6Z' stroke='%23d4b55f' stroke-opacity='0.08' stroke-width='1'/%3E%3Crect x='22' y='22' width='20' height='20' transform='rotate(45 32 32)' stroke='%23d4b55f' stroke-opacity='0.06' stroke-width='1'/%3E%3C/svg%3E");
+  border: 1px solid rgba(212, 181, 95, 0.24);
 }
 
+/* Subtle architectural card elevation */
+.nusuk-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 2px rgba(20, 20, 18, 0.03);
+}
+
+[data-theme="dark"] .nusuk-card {
+  box-shadow: none;
+}
+
+/* rem already includes --font-scale, so Arabic divides it out to scale independently. */
 .text-arabic {
   font-family: var(--font-arabic);
-  font-size: calc(1.875rem * var(--arabic-scale, 1) / var(--font-scale));
-  line-height: 2.15;
+  font-size: calc(1.9rem * var(--arabic-scale, 1) / var(--font-scale));
+  line-height: 2.18;
+  letter-spacing: normal;
 }
 
 .text-arabic-lg {
   font-family: var(--font-arabic);
   font-size: calc(2.5rem * var(--arabic-scale, 1) / var(--font-scale));
-  line-height: 2.1;
+  line-height: 2.12;
+  letter-spacing: normal;
 }
 
 .text-reading-lg {
-  font-size: 1.1875rem;
-  line-height: 1.6;
+  font-size: 1.125rem;
+  line-height: 1.65;
 }
 
 .text-reading {
-  font-size: 1.0625rem;
-  line-height: 1.65;
+  font-size: 1rem;
+  line-height: 1.68;
 }
 
 html[data-gender="pria"] [data-audience="wanita"],
@@ -149,7 +215,7 @@ details > summary::-webkit-details-marker {
     transform: scale(1);
   }
   40% {
-    transform: scale(1.12);
+    transform: scale(1.09);
   }
   100% {
     transform: scale(1);
@@ -157,7 +223,7 @@ details > summary::-webkit-details-marker {
 }
 
 .animate-pop {
-  animation: pop 320ms ease-out;
+  animation: pop 300ms ease-out;
 }
 
 @keyframes toast-timer {

@@ -25,7 +25,7 @@ export const Toggle = ({
       onChange={(e) => onChange(e.target.checked)}
       className="peer sr-only"
     />
-    <span className="relative h-8 w-14 shrink-0 rounded-full bg-border transition-colors peer-checked:bg-primary after:absolute after:left-1 after:top-1 after:size-6 after:rounded-full after:bg-white after:shadow after:transition-transform peer-checked:after:translate-x-6 peer-focus-visible:ring-2 peer-focus-visible:ring-primary" />
+    <span className="relative h-7 w-12 shrink-0 rounded-full bg-border transition-colors peer-checked:bg-gold after:absolute after:left-0.5 after:top-0.5 after:size-6 after:rounded-full after:bg-white after:shadow-sm after:transition-transform peer-checked:after:translate-x-5 peer-focus-visible:ring-2 peer-focus-visible:ring-gold" />
   </label>
 );
 
