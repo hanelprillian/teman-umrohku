@@ -37,23 +37,25 @@ export const SessionHeader = ({
         <Link
           href="/"
           aria-label="Kembali ke beranda"
-          className="relative -ml-2 flex size-11 items-center justify-center rounded-full bg-background active:bg-surface-muted"
+          className="relative -ms-1 flex size-10 items-center justify-center rounded-full border border-border bg-card text-foreground shadow-xs transition-colors hover:bg-muted active:bg-muted"
         >
-          <ArrowLeftIcon className="size-6" />
+          <ArrowLeftIcon className="size-5" />
           <LinkPending />
         </Link>
         {compact ? (
-          <p className="min-w-0 flex-1 truncate text-sm font-semibold">
+          <p className="min-w-0 flex-1 truncate text-sm font-semibold text-foreground">
             {session.title}
-            <span className="font-normal text-muted">
+            <span className="font-normal text-muted-foreground">
               {" "}
               · Langkah {stepIndex + 1}/{session.steps.length}
             </span>
           </p>
         ) : (
           <div className="min-w-0 flex-1">
-            <p className="truncate text-lg font-bold leading-tight">{session.title}</p>
-            <p className="text-sm text-muted">
+            <p className="truncate text-lg font-bold leading-tight text-foreground">
+              {session.title}
+            </p>
+            <p className="text-sm text-muted-foreground">
               Langkah {stepIndex + 1} dari {session.steps.length}
             </p>
           </div>
@@ -61,12 +63,14 @@ export const SessionHeader = ({
         {actions}
         <IhramRulesButton variant={compact ? "icon" : "pill"} />
       </div>
-      <div className={`mx-auto flex max-w-xl gap-1 px-4 ${compact ? "pb-2" : "pb-3"}`}>
+      <div
+        className={`mx-auto flex max-w-xl gap-1 px-4 ${compact ? "pb-2" : "pb-3"}`}
+      >
         {session.steps.map((s, index) => (
           <span
             key={s.id}
             className={`flex-1 rounded-full transition-colors ${compact ? "h-1" : "h-1.5"} ${
-              index <= stepIndex ? "bg-primary" : "bg-border"
+              index <= stepIndex ? "bg-primary" : "bg-muted"
             }`}
           />
         ))}

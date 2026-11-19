@@ -5,6 +5,7 @@ import { sessions } from "@/content/sessions";
 import type { Dua, Session } from "@/content/types";
 import { DuaCard } from "./dua-card";
 import { CloseIcon, SearchIcon } from "./icons";
+import { EmptyState, Input } from "./noor-ui";
 
 interface DuaEntry {
   dua: Dua;
@@ -19,26 +20,30 @@ const normalize = (text: string) =>
     .replace(/['‘’ʿʾ`-]/g, "")
     .toLowerCase();
 
-const groups: { session: Session; entries: DuaEntry[] }[] = sessions.map((session) => {
-  const entries = new Map<string, DuaEntry>();
-  for (const step of session.steps) {
-    for (const dua of step.duas ?? []) {
-      const entry = entries.get(dua.id);
-      if (entry) {
-        entry.stepTitles.push(step.title);
-        continue;
+const groups: { session: Session; entries: DuaEntry[] }[] = sessions.map(
+  (session) => {
+    const entries = new Map<string, DuaEntry>();
+    for (const step of session.steps) {
+      for (const dua of step.duas ?? []) {
+        const entry = entries.get(dua.id);
+        if (entry) {
+          entry.stepTitles.push(step.title);
+          continue;
+        }
+        entries.set(dua.id, {
+          dua,
+          stepTitles: [step.title],
+          searchText: normalize(
+            [session.title, step.title, dua.title, dua.latin, dua.translation].join(
+              " ",
+            ),
+          ),
+        });
       }
-      entries.set(dua.id, {
-        dua,
-        stepTitles: [step.title],
-        searchText: normalize(
-          [session.title, step.title, dua.title, dua.latin, dua.translation].join(" "),
-        ),
-      });
     }
-  }
-  return { session, entries: [...entries.values()] };
-});
+    return { session, entries: [...entries.values()] };
+  },
+);
 
 export const DuaCollection = () => {
   const [query, setQuery] = useState("");
@@ -56,45 +61,48 @@ export const DuaCollection = () => {
 
   return (
     <div className="space-y-8">
-      <label className="sticky top-0 z-10 -mx-4 block bg-background/95 px-4 py-3 backdrop-blur">
-        <span className="sr-only">Cari doa</span>
-        <span className="flex min-h-14 items-center gap-3 rounded-2xl border border-border bg-surface px-4 focus-within:border-primary">
-          <SearchIcon className="size-5 shrink-0 text-muted" />
-          <input
+      <div className="sticky top-0 z-10 -mx-4 bg-background/95 px-4 py-3 backdrop-blur">
+        <label className="relative block">
+          <span className="sr-only">Cari doa</span>
+          <SearchIcon className="pointer-events-none absolute start-3.5 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" />
+          <Input
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Cari: talbiyah, zamzam, shafa…"
-            className="min-w-0 flex-1 bg-transparent text-lg outline-none placeholder:text-muted [&::-webkit-search-cancel-button]:hidden"
+            className="h-12 bg-card pe-11 ps-11 text-base [&::-webkit-search-cancel-button]:hidden"
           />
           {query && (
             <button
               type="button"
               onClick={() => setQuery("")}
               aria-label="Hapus pencarian"
-              className="-mr-2 flex size-10 items-center justify-center rounded-full text-muted active:bg-surface-muted"
+              className="absolute end-1.5 top-1/2 flex size-9 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground hover:bg-muted"
             >
-              <CloseIcon className="size-5" />
+              <CloseIcon className="size-4" />
             </button>
           )}
-        </span>
-      </label>
+        </label>
+      </div>
 
       {results.length === 0 && (
-        <p className="py-10 text-center text-reading text-muted">
-          Tidak ada doa yang cocok dengan &ldquo;{deferredQuery}&rdquo;.
-        </p>
+        <EmptyState
+          title="Doa tidak ditemukan"
+          description={`Tidak ada bacaan yang cocok dengan “${deferredQuery}”.`}
+        />
       )}
 
       {results.map(({ session, entries }) => (
         <section key={session.id}>
-          <h2 className="font-display mb-3 text-xl text-foreground">
+          <h2 className="mb-3 text-xl font-bold text-foreground">
             {session.title}
           </h2>
           <div className="space-y-5">
             {entries.map(({ dua, stepTitles }) => (
               <div key={dua.id}>
-                <p className="mb-1.5 px-1 text-sm text-muted">{stepTitles.join(" · ")}</p>
+                <p className="mb-1.5 px-1 text-sm text-muted-foreground">
+                  {stepTitles.join(" · ")}
+                </p>
                 <DuaCard dua={dua} />
               </div>
             ))}

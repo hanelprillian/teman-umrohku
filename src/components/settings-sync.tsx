@@ -5,6 +5,7 @@ import { applySettingsToDocument, useSettings } from "@/lib/settings-store";
 
 export const SettingsSync = () => {
   const theme = useSettings((s) => s.theme);
+  const noorTheme = useSettings((s) => s.noorTheme);
   const fontScale = useSettings((s) => s.fontScale);
   const arabicScale = useSettings((s) => s.arabicScale);
   const showLatin = useSettings((s) => s.showLatin);
@@ -16,6 +17,7 @@ export const SettingsSync = () => {
   useLayoutEffect(() => {
     applySettingsToDocument({
       theme,
+      noorTheme,
       fontScale,
       arabicScale,
       showLatin,
@@ -24,13 +26,22 @@ export const SettingsSync = () => {
       density,
       gender,
     });
-  }, [theme, fontScale, arabicScale, showLatin, showTranslation, showDalil, density, gender]);
+  }, [
+    theme,
+    noorTheme,
+    fontScale,
+    arabicScale,
+    showLatin,
+    showTranslation,
+    showDalil,
+    density,
+    gender,
+  ]);
 
   useEffect(() => {
     if (theme !== "system") return;
     const media = window.matchMedia("(prefers-color-scheme: dark)");
-    const onChange = () =>
-      applySettingsToDocument(useSettings.getState());
+    const onChange = () => applySettingsToDocument(useSettings.getState());
     media.addEventListener("change", onChange);
     return () => media.removeEventListener("change", onChange);
   }, [theme]);

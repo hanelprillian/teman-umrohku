@@ -17,6 +17,7 @@ import {
 } from "./counter";
 import { DalilList, StatusBadge } from "./dalil";
 import { CheckIcon } from "./icons";
+import { Badge, Card } from "./noor-ui";
 import { LockToggle, ThumbPad } from "./scroll-lock";
 import { SessionHeader } from "./session-header";
 import { StepContent, StepTitle } from "./step-content";
@@ -65,38 +66,47 @@ const DuaSlideContent = ({ slide }: { slide: Slide & { dua: Dua } }) => {
     <>
       <div className="flex flex-1 flex-col justify-center gap-6 py-4">
         <div className="space-y-2">
-          <p className="font-display text-sm text-primary">
+          <p className="text-sm font-semibold text-primary">
             {step.title}
             {total > 1 && ` · Doa ${slideIndex} dari ${total}`}
           </p>
-          {dua.title && <p className="font-semibold text-muted">{dua.title}</p>}
+          {dua.title && (
+            <p className="font-semibold text-muted-foreground">{dua.title}</p>
+          )}
           {dua.repeat && (
-            <span className="inline-block rounded-full bg-accent-soft px-3 py-1 text-sm font-semibold text-accent">
+            <Badge
+              variant="outline"
+              className="rounded-full border-primary/30 bg-primary/10 px-3 py-1 text-sm font-semibold text-primary"
+            >
               {dua.repeat}
-            </span>
+            </Badge>
           )}
         </div>
-        <p dir="rtl" lang="ar" className="text-arabic-lg text-right">
+        <p dir="rtl" lang="ar" className="text-arabic-lg text-right text-foreground">
           {dua.arabic}
         </p>
-        <p className="latin-text text-reading-lg font-medium italic text-primary-strong">
+        <p className="latin-text text-reading-lg font-medium italic text-primary">
           {dua.latin}
         </p>
-        <p className="translation-text text-reading-lg">“{dua.translation}”</p>
+        <p className="translation-text text-reading-lg text-muted-foreground">
+          “{dua.translation}”
+        </p>
       </div>
 
-      <details className="dalil-section group rounded-2xl border border-border bg-surface">
-        <summary className="flex cursor-pointer items-center gap-3 px-4 py-3">
-          <span className="min-w-0 flex-1 truncate text-sm text-muted">
-            {firstDalil.source}
-            {dua.dalil.length > 1 && ` +${dua.dalil.length - 1}`}
-          </span>
-          <StatusBadge status={firstDalil.status} />
-        </summary>
-        <div className="border-t border-border px-4 py-3">
-          <DalilList items={dua.dalil} />
-        </div>
-      </details>
+      <Card className="dalil-section overflow-hidden">
+        <details className="group">
+          <summary className="flex cursor-pointer items-center gap-3 px-4 py-3">
+            <span className="min-w-0 flex-1 truncate text-sm text-muted-foreground">
+              {firstDalil.source}
+              {dua.dalil.length > 1 && ` +${dua.dalil.length - 1}`}
+            </span>
+            <StatusBadge status={firstDalil.status} />
+          </summary>
+          <div className="border-t border-border px-4 py-3">
+            <DalilList items={dua.dalil} />
+          </div>
+        </details>
+      </Card>
     </>
   );
 };
@@ -122,7 +132,7 @@ const SlideEnd = ({
       <button
         type="button"
         onClick={onNext}
-        className="mt-6 flex w-full flex-col items-center gap-1 py-3 text-muted"
+        className="mt-6 flex w-full flex-col items-center gap-1 py-3 text-muted-foreground"
       >
         <ChevronUpIcon />
         <span className="max-w-full truncate text-sm">
@@ -135,7 +145,7 @@ const SlideEnd = ({
 
   if (gatedBy?.counter) {
     return (
-      <p className="mt-6 py-3 text-center text-sm font-semibold text-muted">
+      <p className="mt-6 py-3 text-center text-sm font-semibold text-muted-foreground">
         Selesaikan {gatedBy.counter.total} {gatedBy.counter.unit} untuk lanjut
       </p>
     );
@@ -144,7 +154,7 @@ const SlideEnd = ({
   return (
     <ActionButton
       onAction={onComplete}
-      className="mt-6 flex min-h-16 w-full items-center justify-center gap-2 rounded-2xl bg-primary px-4 text-lg font-bold text-primary-foreground active:bg-primary-strong"
+      className="mt-6 flex min-h-14 w-full items-center justify-center gap-2 rounded-[var(--radius)] bg-primary px-4 text-lg font-bold text-primary-foreground shadow-sm hover:bg-primary/92"
     >
       Selesai sesi <CheckIcon className="size-5" />
     </ActionButton>
@@ -314,7 +324,7 @@ export const ImmersiveRunner = ({ session }: { session: Session }) => {
                   <DuaSlideContent slide={{ ...slide, dua: slide.dua }} />
                 ) : (
                   <div className="flex-1 space-y-6">
-                    <p className="font-display text-sm text-primary">
+                    <p className="text-sm font-semibold text-primary">
                       Langkah {slide.stepIndex + 1} dari {steps.length}
                     </p>
                     <StepTitle step={step} />

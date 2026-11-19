@@ -1,25 +1,50 @@
 import type { Dalil, DalilStatus } from "@/content/types";
+import { Badge } from "./noor-ui";
 
-const statusStyles: Record<DalilStatus, { label: string; className: string }> = {
-  quran: { label: "Al-Qur'an", className: "bg-primary text-primary-foreground" },
-  shahih: { label: "Shahih", className: "bg-primary-soft text-primary-strong" },
-  hasan: { label: "Hasan", className: "bg-primary-soft text-primary-strong" },
-  atsar: { label: "Atsar Sahabat", className: "bg-accent-soft text-accent" },
-  ijma: { label: "Ijma' Ulama", className: "bg-primary-soft text-primary-strong" },
+const statusStyles: Record<
+  DalilStatus,
+  {
+    label: string;
+    variant: "default" | "secondary" | "destructive" | "outline";
+    className?: string;
+  }
+> = {
+  quran: { label: "Al-Qur'an", variant: "default" },
+  shahih: {
+    label: "Shahih",
+    variant: "outline",
+    className: "border-success/40 bg-success/10 text-success-foreground",
+  },
+  hasan: {
+    label: "Hasan",
+    variant: "outline",
+    className: "border-info/40 bg-info/10 text-info-foreground",
+  },
+  atsar: {
+    label: "Atsar Sahabat",
+    variant: "outline",
+    className: "border-warning/40 bg-warning/10 text-warning-foreground",
+  },
+  ijma: {
+    label: "Ijma' Ulama",
+    variant: "outline",
+    className: "border-primary/35 bg-primary/10 text-primary",
+  },
   diperselisihkan: {
     label: "Diperselisihkan",
-    className: "bg-danger-soft text-danger",
+    variant: "destructive",
   },
 };
 
 export const StatusBadge = ({ status }: { status: DalilStatus }) => {
-  const { label, className } = statusStyles[status];
+  const { label, variant, className } = statusStyles[status];
   return (
-    <span
-      className={`inline-flex shrink-0 items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${className}`}
+    <Badge
+      variant={variant}
+      className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold ${className ?? ""}`}
     >
       {label}
-    </span>
+    </Badge>
   );
 };
 
@@ -27,7 +52,9 @@ const DalilItem = ({ dalil }: { dalil: Dalil }) => {
   const hasDetail = Boolean(dalil.quote || dalil.note);
   const header = (
     <div className="flex items-start justify-between gap-3">
-      <span className="text-sm font-medium text-muted">{dalil.source}</span>
+      <span className="text-sm font-medium text-muted-foreground">
+        {dalil.source}
+      </span>
       <StatusBadge status={dalil.status} />
     </div>
   );
@@ -43,9 +70,9 @@ const DalilItem = ({ dalil }: { dalil: Dalil }) => {
             Lihat keterangan
           </span>
         </summary>
-        <div className="mt-2 space-y-2 border-l-2 border-primary/40 pl-3 text-sm leading-relaxed">
+        <div className="mt-2 space-y-2 border-s-2 border-primary/40 ps-3 text-sm leading-relaxed">
           {dalil.quote && <p className="italic">“{dalil.quote}”</p>}
-          {dalil.note && <p className="text-muted">{dalil.note}</p>}
+          {dalil.note && <p className="text-muted-foreground">{dalil.note}</p>}
         </div>
       </details>
     </li>

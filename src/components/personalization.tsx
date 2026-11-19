@@ -1,6 +1,7 @@
 "use client";
 
 import type { Gender, Hand } from "@/lib/settings-store";
+import { Card, Switch } from "./noor-ui";
 
 export const Toggle = ({
   label,
@@ -13,19 +14,16 @@ export const Toggle = ({
   checked: boolean;
   onChange: (value: boolean) => void;
 }) => (
-  <label className="flex min-h-14 cursor-pointer items-center justify-between gap-4 px-4 py-2">
-    <span>
-      <span className="block font-semibold">{label}</span>
-      {description && <span className="block text-sm text-muted">{description}</span>}
+  <label className="flex min-h-14 cursor-pointer items-center justify-between gap-4 px-4 py-3">
+    <span className="min-w-0 flex-1">
+      <span className="block font-semibold text-card-foreground">{label}</span>
+      {description && (
+        <span className="mt-0.5 block text-sm text-muted-foreground">
+          {description}
+        </span>
+      )}
     </span>
-    <input
-      type="checkbox"
-      role="switch"
-      checked={checked}
-      onChange={(e) => onChange(e.target.checked)}
-      className="peer sr-only"
-    />
-    <span className="relative h-8 w-14 shrink-0 rounded-full bg-border transition-colors peer-checked:bg-primary after:absolute after:left-1 after:top-1 after:size-6 after:rounded-full after:bg-white after:shadow after:transition-transform peer-checked:after:translate-x-6 peer-focus-visible:ring-2 peer-focus-visible:ring-primary" />
+    <Switch checked={checked} onCheckedChange={onChange} aria-label={label} />
   </label>
 );
 
@@ -43,7 +41,7 @@ export const Segmented = <T extends string | boolean>({
   <div
     role="group"
     aria-label={label}
-    className="grid gap-2 rounded-2xl border border-border bg-surface p-1.5"
+    className="grid gap-1.5 rounded-[var(--radius)] border border-border bg-muted/60 p-1.5"
     style={{ gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` }}
   >
     {options.map((option) => (
@@ -52,8 +50,10 @@ export const Segmented = <T extends string | boolean>({
         type="button"
         onClick={() => onChange(option.value)}
         aria-pressed={value === option.value}
-        className={`min-h-12 rounded-xl font-semibold ${
-          value === option.value ? "bg-primary text-primary-foreground" : "text-muted"
+        className={`min-h-11 rounded-[var(--radius-md)] text-sm font-semibold transition-all ${
+          value === option.value
+            ? "bg-primary text-primary-foreground shadow-sm"
+            : "text-muted-foreground hover:text-foreground"
         }`}
       >
         {option.label}
@@ -82,8 +82,8 @@ const handOptions: { value: Hand; label: string }[] = [
 
 const FieldLabel = ({ title, hint }: { title: string; hint: string }) => (
   <div className="mb-2 px-1">
-    <p className="font-semibold">{title}</p>
-    <p className="text-sm text-muted">{hint}</p>
+    <p className="font-semibold text-foreground">{title}</p>
+    <p className="text-sm text-muted-foreground">{hint}</p>
   </div>
 );
 
@@ -121,7 +121,7 @@ export const PersonalizationFields = ({
       />
     </div>
 
-    <div className="divide-y divide-border rounded-2xl border border-border bg-surface">
+    <Card className="divide-y divide-border overflow-hidden">
       <Toggle
         label="Kunci geser"
         description="Mode imersif: pindah dengan tombol ▲▼, cocok saat hujan atau tangan basah."
@@ -134,6 +134,6 @@ export const PersonalizationFields = ({
         checked={value.autoFocusCounter}
         onChange={(autoFocusCounter) => onChange({ autoFocusCounter })}
       />
-    </div>
+    </Card>
   </div>
 );

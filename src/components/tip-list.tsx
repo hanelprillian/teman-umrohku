@@ -1,5 +1,5 @@
 import type { Audience, Tip } from "@/content/types";
-import { AlertIcon } from "./icons";
+import { Badge, Callout } from "./noor-ui";
 
 const audienceLabel: Record<Audience, string> = {
   pria: "Pria",
@@ -7,28 +7,23 @@ const audienceLabel: Record<Audience, string> = {
 };
 
 export const TipList = ({ tips }: { tips: Tip[] }) => (
-  <ul className="space-y-2.5">
+  <ul className="space-y-3">
     {tips.map((tip) => (
-      <li
-        key={tip.text}
-        data-audience={tip.audience}
-        className={`flex gap-3 rounded-xl px-4 py-3 text-reading ${
-          tip.warning
-            ? "bg-accent-soft text-foreground"
-            : "bg-surface-muted text-foreground"
-        }`}
-      >
-        {tip.warning && (
-          <AlertIcon className="mt-1 size-5 shrink-0 text-accent" />
-        )}
-        <div>
+      <li key={tip.text} data-audience={tip.audience}>
+        <Callout
+          type={tip.warning ? "warning" : "note"}
+          className="my-0 text-reading"
+        >
           {tip.audience && (
-            <span className="audience-prefix mr-2 inline-block align-[2px] text-xs font-medium text-primary-strong">
+            <Badge
+              variant="outline"
+              className="audience-prefix me-2 align-[2px] border-primary/30 bg-primary/10 text-xs text-primary"
+            >
               {audienceLabel[tip.audience]}
-            </span>
+            </Badge>
           )}
           {tip.text}
-        </div>
+        </Callout>
       </li>
     ))}
   </ul>

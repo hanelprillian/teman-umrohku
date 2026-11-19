@@ -18,19 +18,25 @@ export const LockToggle = () => {
       onClick={() => setScrollLock(!scrollLock)}
       aria-pressed={scrollLock}
       aria-label={scrollLock ? "Buka kunci geser" : "Kunci geser, pakai tombol"}
-      className={`flex size-11 shrink-0 items-center justify-center rounded-full transition-colors ${
+      className={`flex size-10 shrink-0 items-center justify-center rounded-full border transition-colors ${
         scrollLock
-          ? "bg-primary text-primary-foreground"
-          : "text-muted active:bg-surface-muted"
+          ? "border-primary bg-primary text-primary-foreground shadow-xs"
+          : "border-border bg-card text-muted-foreground hover:bg-muted active:bg-muted"
       }`}
     >
-      {scrollLock ? <LockIcon className="size-5" /> : <UnlockIcon className="size-5" />}
+      {scrollLock ? (
+        <LockIcon className="size-5" />
+      ) : (
+        <UnlockIcon className="size-5" />
+      )}
     </button>
   );
 };
 
 const readFooterHeight = () =>
-  parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--footer-h")) || 0;
+  parseFloat(
+    getComputedStyle(document.documentElement).getPropertyValue("--footer-h"),
+  ) || 0;
 
 interface ThumbPadProps {
   /** Active slide position; re-reads the scroller when it changes. */
@@ -87,7 +93,8 @@ export const ThumbPad = ({
     lockedUntil.current = now + PRESS_LOCK_MS;
 
     const { atTop, atBottom } = edges(scroller);
-    const distance = (scroller.clientHeight - readFooterHeight()) * SCROLL_STEP_RATIO;
+    const distance =
+      (scroller.clientHeight - readFooterHeight()) * SCROLL_STEP_RATIO;
     if (direction === "down") {
       if (atBottom) onNext();
       else scroller.scrollBy({ top: distance, behavior: "smooth" });
@@ -102,9 +109,10 @@ export const ThumbPad = ({
 
   return (
     <div
-      className={`fixed z-20 flex flex-col gap-3 ${hand === "left" ? "left-4" : "right-4"}`}
+      className={`fixed z-20 flex flex-col gap-3 ${hand === "left" ? "start-4" : "end-4"}`}
       style={{
-        bottom: "calc(max(var(--footer-h, 0px), env(safe-area-inset-bottom)) + 1rem)",
+        bottom:
+          "calc(max(var(--footer-h, 0px), env(safe-area-inset-bottom)) + 1rem)",
       }}
     >
       <button
@@ -114,11 +122,11 @@ export const ThumbPad = ({
         aria-label={pagesUp ? "Slide sebelumnya" : "Gulir ke atas"}
         className={`${buttonClass} ${
           pagesUp
-            ? "border-primary bg-primary-soft text-primary-strong"
-            : "border-border bg-surface/95 text-foreground backdrop-blur"
+            ? "border-primary bg-primary/15 text-primary"
+            : "border-border bg-card/95 text-card-foreground backdrop-blur"
         }`}
       >
-        <ChevronUpIcon className="size-8" strokeWidth={2.5} />
+        <ChevronUpIcon className="size-7" weight="bold" />
       </button>
       <button
         type="button"
@@ -128,10 +136,10 @@ export const ThumbPad = ({
         className={`${buttonClass} ${
           pagesDown
             ? "border-primary bg-primary text-primary-foreground"
-            : "border-border bg-surface/95 text-foreground backdrop-blur"
+            : "border-border bg-card/95 text-card-foreground backdrop-blur"
         }`}
       >
-        <ChevronDownIcon className="size-8" strokeWidth={2.5} />
+        <ChevronDownIcon className="size-7" weight="bold" />
       </button>
     </div>
   );

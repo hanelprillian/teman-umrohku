@@ -6,6 +6,7 @@ import type { Session } from "@/content/types";
 import { useHydrated, useVisibleBelowHeader, useWakeLock } from "@/lib/hooks";
 import { useProgress } from "@/lib/progress-store";
 import { useSettings } from "@/lib/settings-store";
+import { ActionButton } from "./action-button";
 import {
   CounterFocus,
   CounterPanel,
@@ -15,10 +16,10 @@ import {
   UndoToast,
   useCounterFocus,
 } from "./counter";
-import { ActionButton } from "./action-button";
-import { ArrowLeftIcon, ArrowRightIcon, CheckIcon } from "./icons";
+import { ArrowLeftIcon, ArrowRightIcon, CheckCircleIcon, CheckIcon } from "./icons";
 import { ImmersiveRunner } from "./immersive-runner";
 import { LinkPending } from "./link-pending";
+import { Badge } from "./noor-ui";
 import { SessionHeader } from "./session-header";
 import { StepContent, StepTitle } from "./step-content";
 
@@ -29,9 +30,9 @@ interface SessionRunnerProps {
 
 const Skeleton = () => (
   <div className="mx-auto max-w-xl animate-pulse space-y-4 px-4 py-6">
-    <div className="h-6 w-1/2 rounded bg-surface-muted" />
-    <div className="h-40 rounded-2xl bg-surface-muted" />
-    <div className="h-40 rounded-2xl bg-surface-muted" />
+    <div className="h-6 w-1/2 rounded-[var(--radius-sm)] bg-muted" />
+    <div className="h-40 rounded-[var(--radius)] bg-muted" />
+    <div className="h-40 rounded-[var(--radius)] bg-muted" />
   </div>
 );
 
@@ -41,15 +42,20 @@ const CompletedView = ({
   onRepeat,
 }: SessionRunnerProps & { onRepeat: () => void }) => (
   <main className="mx-auto flex min-h-dvh max-w-xl flex-col items-center justify-center gap-6 px-6 py-10 text-center">
-    <div className="flex size-20 items-center justify-center rounded-full bg-primary text-primary-foreground">
-      <CheckIcon className="size-10" />
+    <div className="flex size-20 items-center justify-center rounded-full bg-success/15 text-success">
+      <CheckCircleIcon className="size-12" />
     </div>
     <div>
-      <p className="text-sm font-medium text-muted">
+      <Badge
+        variant="outline"
+        className="mb-2 rounded-full border-success/40 bg-success/10 text-success-foreground"
+      >
         Sesi selesai
-      </p>
-      <h1 className="mt-1 text-3xl font-extrabold">{session.title}</h1>
-      <p className="mt-2 text-reading text-muted">
+      </Badge>
+      <h1 className="text-3xl font-extrabold text-foreground">
+        {session.title}
+      </h1>
+      <p className="mt-2 text-reading text-muted-foreground">
         Alhamdulillah. Semoga Allah menerima ibadahmu.
       </p>
     </div>
@@ -57,7 +63,7 @@ const CompletedView = ({
       {nextSession ? (
         <Link
           href={`/sesi/${nextSession.id}/`}
-          className="relative flex min-h-16 items-center justify-center gap-2 rounded-2xl bg-primary px-5 text-lg font-bold text-primary-foreground"
+          className="relative flex min-h-14 items-center justify-center gap-2 rounded-[var(--radius)] bg-primary px-5 text-lg font-bold text-primary-foreground shadow-sm hover:bg-primary/92"
         >
           Lanjut: {nextSession.title}
           <ArrowRightIcon className="size-5" />
@@ -66,7 +72,7 @@ const CompletedView = ({
       ) : (
         <Link
           href="/"
-          className="relative flex min-h-16 items-center justify-center rounded-2xl bg-primary px-5 text-lg font-bold text-primary-foreground"
+          className="relative flex min-h-14 items-center justify-center rounded-[var(--radius)] bg-primary px-5 text-lg font-bold text-primary-foreground shadow-sm hover:bg-primary/92"
         >
           Kembali ke beranda
           <LinkPending />
@@ -74,14 +80,14 @@ const CompletedView = ({
       )}
       <ActionButton
         onAction={onRepeat}
-        className="flex min-h-14 items-center justify-center rounded-2xl border border-border font-semibold text-muted"
+        className="flex min-h-12 items-center justify-center rounded-[var(--radius)] border border-border bg-card font-semibold text-muted-foreground hover:bg-muted"
       >
         Ulangi sesi ini
       </ActionButton>
       {nextSession && (
         <Link
           href="/"
-          className="relative bg-background py-2 font-semibold text-muted underline"
+          className="relative py-2 font-semibold text-muted-foreground underline underline-offset-4 hover:text-foreground"
         >
           Ke beranda
           <LinkPending />
@@ -165,7 +171,7 @@ const StandardRunner = ({ session }: { session: Session }) => {
           {step.counter && !counterDone && stepIndex > 0 && (
             <ActionButton
               onAction={goBack}
-              className="mb-2 flex min-h-8 items-center gap-1 text-sm font-semibold text-muted"
+              className="mb-2 flex min-h-8 items-center gap-1.5 text-sm font-semibold text-muted-foreground hover:text-foreground"
             >
               <ArrowLeftIcon className="size-4" /> Langkah sebelumnya
             </ActionButton>
@@ -179,7 +185,9 @@ const StandardRunner = ({ session }: { session: Session }) => {
               counter={step.counter}
               count={count}
               laps={laps}
-              onUndo={() => setCount(session.id, step.id, Math.max(0, count - 1))}
+              onUndo={() =>
+                setCount(session.id, step.id, Math.max(0, count - 1))
+              }
               onExpand={focus.expand}
             />
           </div>
@@ -201,29 +209,33 @@ const StandardRunner = ({ session }: { session: Session }) => {
         <div className="mx-auto max-w-xl space-y-3 px-4 pt-3">
           {!focusOpen && toast}
           {step.counter && !counterDone ? (
-            <CounterTapButton counter={step.counter} count={count} onTap={recordLap} />
+            <CounterTapButton
+              counter={step.counter}
+              count={count}
+              onTap={recordLap}
+            />
           ) : (
             <div className="flex gap-3">
               {stepIndex > 0 && (
                 <ActionButton
                   onAction={goBack}
                   aria-label="Langkah sebelumnya"
-                  className="flex min-h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-border active:bg-surface-muted"
+                  className="flex min-h-14 w-14 shrink-0 items-center justify-center rounded-[var(--radius)] border border-border bg-card text-foreground shadow-xs hover:bg-muted active:bg-muted"
                 >
-                  <ArrowLeftIcon className="size-6" />
+                  <ArrowLeftIcon className="size-5" />
                 </ActionButton>
               )}
               {step.optional && (
                 <ActionButton
                   onAction={goNext}
-                  className="flex min-h-16 shrink-0 items-center justify-center rounded-2xl border border-border px-5 font-semibold text-muted active:bg-surface-muted"
+                  className="flex min-h-14 shrink-0 items-center justify-center rounded-[var(--radius)] border border-border bg-card px-5 font-semibold text-muted-foreground hover:bg-muted active:bg-muted"
                 >
                   Lewati
                 </ActionButton>
               )}
               <ActionButton
                 onAction={goNext}
-                className="flex min-h-16 flex-1 items-center justify-center gap-2 rounded-2xl bg-primary px-4 text-lg font-bold text-primary-foreground active:bg-primary-strong"
+                className="flex min-h-14 flex-1 items-center justify-center gap-2 rounded-[var(--radius)] bg-primary px-4 text-lg font-bold text-primary-foreground shadow-sm hover:bg-primary/92"
               >
                 {isLastStep ? "Selesai sesi" : "Lanjut"}
                 {isLastStep ? (

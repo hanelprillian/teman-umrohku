@@ -13,12 +13,12 @@ export default function SettingsPage() {
         <Link
           href="/"
           aria-label="Kembali ke beranda"
-          className="relative -ml-2 flex size-11 items-center justify-center rounded-full bg-background active:bg-surface-muted"
+          className="relative -ms-1 flex size-10 items-center justify-center rounded-full border border-border bg-card text-foreground shadow-xs transition-colors hover:bg-muted active:bg-muted"
         >
-          <ArrowLeftIcon className="size-6" />
+          <ArrowLeftIcon className="size-5" />
           <LinkPending />
         </Link>
-        <h1 className="font-display text-3xl">Pengaturan</h1>
+        <h1 className="text-2xl font-bold text-foreground">Pengaturan</h1>
       </header>
       <SettingsPanel />
     </main>
