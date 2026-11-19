@@ -38,7 +38,7 @@ const IhramRulesContent = () => (
 
     {groups.map((group) => (
       <section key={group.title} data-audience={group.audience}>
-        <h3 className="mb-3 text-sm font-bold uppercase tracking-wide text-muted">
+        <h3 className="mb-3 text-sm font-medium text-muted">
           {group.title}
         </h3>
         <ol className="space-y-3">
@@ -52,7 +52,7 @@ const IhramRulesContent = () => (
     ))}
 
     <section>
-      <h3 className="mb-3 text-sm font-bold uppercase tracking-wide text-muted">
+      <h3 className="mb-3 text-sm font-medium text-muted">
         Yang boleh dilakukan
       </h3>
       <ul className="space-y-2.5 rounded-2xl border border-border bg-surface p-4">
@@ -69,7 +69,7 @@ const IhramRulesContent = () => (
     </section>
 
     <section>
-      <h3 className="mb-3 text-sm font-bold uppercase tracking-wide text-muted">
+      <h3 className="mb-3 text-sm font-medium text-muted">
         Kalau terlanjur melanggar
       </h3>
       <div className="space-y-3">
@@ -89,7 +89,7 @@ const IhramRulesContent = () => (
   </div>
 );
 
-export const IhramRulesButton = ({ variant }: { variant: "icon" | "pill" | "card" }) => {
+export const IhramRulesButton = ({ variant }: { variant: "icon" | "pill" | "card" | "row" }) => {
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   const open = () => {
@@ -123,16 +123,24 @@ export const IhramRulesButton = ({ variant }: { variant: "icon" | "pill" | "card
         <button
           type="button"
           onClick={open}
-          className="flex w-full items-center gap-4 rounded-2xl border border-border bg-surface p-4 text-left active:bg-surface-muted"
+          className={`flex w-full items-center gap-3 text-left active:bg-surface-muted ${
+            variant === "row"
+              ? "border-t border-border px-4 py-3.5"
+              : "rounded-2xl border border-border bg-surface p-4"
+          }`}
         >
-          <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-accent-soft text-accent">
-            <ShieldIcon className="size-6" />
-          </span>
+          {variant === "card" && (
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-accent-soft text-accent">
+              <ShieldIcon className="size-6" />
+            </span>
+          )}
           <span className="min-w-0 flex-1">
-            <span className="block text-lg font-bold">Larangan ihram</span>
-            <span className="block text-sm text-muted">Yang tidak boleh & fidyahnya</span>
+            <span className={`block ${variant === "row" ? "font-medium" : "text-lg font-bold"}`}>
+              Larangan ihram
+            </span>
+            <span className="block text-sm text-muted">Yang tidak boleh, dan fidyahnya</span>
           </span>
-          <ArrowRightIcon className="size-5 shrink-0 text-muted" />
+          {variant === "card" && <ArrowRightIcon className="size-5 shrink-0 text-muted" />}
         </button>
       )}
 

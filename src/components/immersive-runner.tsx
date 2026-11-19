@@ -65,7 +65,7 @@ const DuaSlideContent = ({ slide }: { slide: Slide & { dua: Dua } }) => {
     <>
       <div className="flex flex-1 flex-col justify-center gap-6 py-4">
         <div className="space-y-2">
-          <p className="text-sm font-bold uppercase tracking-wide text-primary">
+          <p className="font-display text-sm text-primary">
             {step.title}
             {total > 1 && ` · Doa ${slideIndex} dari ${total}`}
           </p>
@@ -254,12 +254,9 @@ export const ImmersiveRunner = ({ session }: { session: Session }) => {
   useEffect(() => {
     if (!scrollPending.current) return;
     scrollPending.current = false;
-    if (activePosition !== activeIntroPosition) goTo(activeIntroPosition);
-    else
-      slideRefs.current[activeIntroPosition]?.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
+    const next = slides[activeIntroPosition + 1];
+    const intro = slides[activeIntroPosition];
+    if (next && intro && next.stepIndex === intro.stepIndex) goTo(activeIntroPosition + 1);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only react to a new lap
   }, [activeCount]);
 
@@ -317,7 +314,7 @@ export const ImmersiveRunner = ({ session }: { session: Session }) => {
                   <DuaSlideContent slide={{ ...slide, dua: slide.dua }} />
                 ) : (
                   <div className="flex-1 space-y-6">
-                    <p className="text-sm font-bold uppercase tracking-wide text-primary">
+                    <p className="font-display text-sm text-primary">
                       Langkah {slide.stepIndex + 1} dari {steps.length}
                     </p>
                     <StepTitle step={step} />

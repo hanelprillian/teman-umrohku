@@ -38,15 +38,11 @@ const OnboardingSheet = () => {
         </div>
 
         <div className="mb-6">
-          <p className="text-sm font-semibold uppercase tracking-wide text-primary">
-            Ahlan wa sahlan
-          </p>
-          <h1 id="onboarding-title" className="text-3xl font-extrabold leading-tight">
-            Sesuaikan panduanmu
+          <p className="font-display text-lg text-primary">Teman Umrohku</p>
+          <h1 id="onboarding-title" className="font-display text-4xl leading-tight">
+            Biar pas di tanganmu
           </h1>
-          <p className="mt-2 text-muted">
-            Opsional. Semua pilihan bisa diubah kapan saja di Pengaturan.
-          </p>
+          <p className="mt-2 text-muted">Empat pilihan. Bisa diubah nanti di Pengaturan.</p>
         </div>
 
         <div className="flex-1">
@@ -60,7 +56,7 @@ const OnboardingSheet = () => {
           <button
             type="button"
             onClick={save}
-            className="min-h-14 w-full rounded-2xl bg-primary text-lg font-bold text-primary-foreground shadow-lg active:scale-[0.98]"
+            className="min-h-14 w-full rounded-2xl bg-primary text-lg font-semibold text-primary-foreground active:bg-primary-strong"
           >
             Simpan & mulai
           </button>

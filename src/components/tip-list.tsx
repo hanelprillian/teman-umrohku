@@ -23,7 +23,7 @@ export const TipList = ({ tips }: { tips: Tip[] }) => (
         )}
         <div>
           {tip.audience && (
-            <span className="audience-prefix mr-2 inline-block rounded-md bg-primary px-1.5 py-0.5 align-[2px] text-xs font-bold uppercase tracking-wide text-primary-foreground">
+            <span className="audience-prefix mr-2 inline-block align-[2px] text-xs font-medium text-primary-strong">
               {audienceLabel[tip.audience]}
             </span>
           )}

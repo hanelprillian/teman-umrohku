@@ -1,14 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import { Plus_Jakarta_Sans, Scheherazade_New } from "next/font/google";
+import { Scheherazade_New } from "next/font/google";
 import { ServiceWorkerRegister } from "@/components/service-worker-register";
 import { SettingsSync } from "@/components/settings-sync";
 import { settingsInlineScript } from "@/lib/settings-store";
 import "./globals.css";
-
-const jakarta = Plus_Jakarta_Sans({
-  variable: "--font-jakarta",
-  subsets: ["latin", "latin-ext"],
-});
 
 const scheherazade = Scheherazade_New({
   variable: "--font-scheherazade",
@@ -17,14 +12,13 @@ const scheherazade = Scheherazade_New({
 });
 
 export const metadata: Metadata = {
-  title: "Panduan Umroh",
-  description:
-    "Panduan umroh langkah demi langkah: tawaf, sa'i, doa, dan dalilnya.",
-  applicationName: "Panduan Umroh",
+  title: "Teman Umrohku",
+  description: "Teman di saku saat umroh: langkah, doa, dan dalilnya.",
+  applicationName: "Teman Umrohku",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
-    title: "Umroh",
+    title: "Teman Umrohku",
     statusBarStyle: "default",
   },
   icons: {
@@ -34,7 +28,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#faf7f0",
+  themeColor: "#f6f5f2",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -46,7 +40,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="id"
       data-theme="light"
       suppressHydrationWarning
-      className={`${jakarta.variable} ${scheherazade.variable} h-full antialiased`}
+      className={`${scheherazade.variable} h-full antialiased`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: settingsInlineScript }} />

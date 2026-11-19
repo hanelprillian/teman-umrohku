@@ -7,11 +7,11 @@ import { TipList } from "./tip-list";
 export const StepTitle = ({ step }: { step: Step }) => (
   <div>
     {step.optional && (
-      <span className="mb-2 inline-block rounded-full bg-accent-soft px-3 py-1 text-xs font-bold uppercase tracking-wide text-accent">
-        Opsional · sunnah jika memungkinkan
+      <span className="mb-2 inline-block text-sm font-medium text-accent">
+        Opsional, sunnah jika memungkinkan
       </span>
     )}
-    <h1 className="text-2xl font-extrabold leading-tight">{step.title}</h1>
+    <h1 className="font-display text-3xl leading-tight">{step.title}</h1>
   </div>
 );
 
@@ -36,8 +36,10 @@ export const StepContent = ({
 
     {showDuas && step.duas && step.duas.length > 0 && (
       <div className="space-y-4">
-        {step.duas.map((dua) => (
-          <DuaCard key={dua.id} dua={dua} />
+        {step.duas.map((dua, index) => (
+          <div key={dua.id} {...(index === 0 ? { "data-first-dua": "" } : {})}>
+            <DuaCard dua={dua} />
+          </div>
         ))}
       </div>
     )}

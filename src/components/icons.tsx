@@ -14,6 +14,16 @@ const base = {
   "aria-hidden": true,
 } as const;
 
+/** Two figures, one a step beside the other. The mark for Teman Umrohku. */
+export const MarkIcon = (props: IconProps) => (
+  <svg {...base} {...props}>
+    <circle cx="8" cy="6.5" r="2" />
+    <path d="M8 9.5v6" />
+    <circle cx="15.5" cy="8" r="2" />
+    <path d="M15.5 11v5.5" />
+  </svg>
+);
+
 export const ArrowLeftIcon = (props: IconProps) => (
   <svg {...base} {...props}>
     <path d="M19 12H5M12 19l-7-7 7-7" />

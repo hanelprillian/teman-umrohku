@@ -12,7 +12,7 @@ export const generateMetadata = async ({
   params,
 }: PageProps<"/sesi/[id]">): Promise<Metadata> => {
   const { id } = await params;
-  return { title: `${getSession(id)?.title ?? "Sesi"} · Panduan Umroh` };
+  return { title: `${getSession(id)?.title ?? "Sesi"} · Teman Umrohku` };
 };
 
 export default async function SessionPage({ params }: PageProps<"/sesi/[id]">) {

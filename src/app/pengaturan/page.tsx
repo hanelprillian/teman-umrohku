@@ -4,7 +4,7 @@ import { ArrowLeftIcon } from "@/components/icons";
 import { LinkPending } from "@/components/link-pending";
 import { SettingsPanel } from "@/components/settings-panel";
 
-export const metadata: Metadata = { title: "Pengaturan · Panduan Umroh" };
+export const metadata: Metadata = { title: "Pengaturan · Teman Umrohku" };
 
 export default function SettingsPage() {
   return (
@@ -18,7 +18,7 @@ export default function SettingsPage() {
           <ArrowLeftIcon className="size-6" />
           <LinkPending />
         </Link>
-        <h1 className="text-2xl font-extrabold">Pengaturan</h1>
+        <h1 className="font-display text-3xl">Pengaturan</h1>
       </header>
       <SettingsPanel />
     </main>

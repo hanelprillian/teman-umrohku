@@ -204,7 +204,7 @@ export const CounterPanel = ({ counter, count, laps, onUndo, onExpand }: Counter
           </p>
         ) : (
           <>
-            <p className="text-xs font-semibold uppercase tracking-wide text-primary-strong/80">
+            <p className="text-xs font-medium text-primary-strong/80">
               Sekarang
             </p>
             <p className="text-xl font-bold text-primary-strong">

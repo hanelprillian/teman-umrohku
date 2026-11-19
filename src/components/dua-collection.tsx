@@ -88,7 +88,7 @@ export const DuaCollection = () => {
 
       {results.map(({ session, entries }) => (
         <section key={session.id}>
-          <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-primary">
+          <h2 className="font-display mb-3 text-xl text-foreground">
             {session.title}
           </h2>
           <div className="space-y-5">
