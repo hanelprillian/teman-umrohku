@@ -3,36 +3,36 @@
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 :root {
-  --background: #faf7f0;
-  --surface: #ffffff;
-  --surface-muted: #f2ede1;
-  --foreground: #1c1917;
-  --muted: #6b645a;
-  --border: #e5ddcc;
-  --primary: #0f6b5e;
-  --primary-strong: #0b5248;
-  --primary-soft: #dcefe9;
-  --primary-foreground: #ffffff;
-  --accent: #a16207;
-  --accent-soft: #fdf3dc;
+  --background: #f6f5f2;
+  --surface: #fffcf8;
+  --surface-muted: #eeece7;
+  --foreground: #1c1b19;
+  --muted: #625f59;
+  --border: #e3e0d8;
+  --primary: #1b6b45;
+  --primary-strong: #124c31;
+  --primary-soft: #e4f0e8;
+  --primary-foreground: #f7faf7;
+  --accent: #8a4b12;
+  --accent-soft: #f6ecdf;
   --danger-soft: #fdecec;
   --danger: #b42318;
   --font-scale: 1;
 }
 
 [data-theme="dark"] {
-  --background: #0b1311;
-  --surface: #121d1a;
-  --surface-muted: #18251f;
-  --foreground: #ecebe6;
-  --muted: #a3a89f;
-  --border: #23332d;
-  --primary: #34c3a8;
-  --primary-strong: #5fd6bf;
-  --primary-soft: #143029;
-  --primary-foreground: #04110e;
-  --accent: #f1b84b;
-  --accent-soft: #2b2311;
+  --background: #121311;
+  --surface: #1b1c19;
+  --surface-muted: #242520;
+  --foreground: #f2f0ea;
+  --muted: #a8a49b;
+  --border: #2e2f2a;
+  --primary: #8fceab;
+  --primary-strong: #b7e2c8;
+  --primary-soft: #1c2c24;
+  --primary-foreground: #102116;
+  --accent: #e2b07a;
+  --accent-soft: #2a2218;
   --danger-soft: #2f1615;
   --danger: #f4877e;
 }
@@ -52,7 +52,8 @@
   --color-accent-soft: var(--accent-soft);
   --color-danger: var(--danger);
   --color-danger-soft: var(--danger-soft);
-  --font-sans: var(--font-jakarta);
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Iowan Old Style", "Palatino Linotype", Palatino, "New York", Georgia, serif;
   --font-arabic: var(--font-scheherazade);
 }
 
@@ -84,6 +85,11 @@ a {
 }
 
 /* rem already includes --font-scale, so Arabic divides it out to scale independently. */
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+
 .text-arabic {
   font-family: var(--font-arabic);
   font-size: calc(1.875rem * var(--arabic-scale, 1) / var(--font-scale));

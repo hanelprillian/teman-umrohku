@@ -45,7 +45,7 @@ const CompletedView = ({
       <CheckIcon className="size-10" />
     </div>
     <div>
-      <p className="text-sm font-semibold uppercase tracking-wide text-muted">
+      <p className="text-sm font-medium text-muted">
         Sesi selesai
       </p>
       <h1 className="mt-1 text-3xl font-extrabold">{session.title}</h1>
@@ -116,7 +116,14 @@ const StandardRunner = ({ session }: { session: Session }) => {
   useEffect(() => {
     if (!scrollPending.current) return;
     scrollPending.current = false;
-    requestAnimationFrame(scrollToTop);
+    const dua = document.querySelector<HTMLElement>("[data-first-dua]");
+    if (!dua) return;
+    const headerH =
+      parseFloat(
+        getComputedStyle(document.documentElement).getPropertyValue("--header-h"),
+      ) || 0;
+    const top = dua.getBoundingClientRect().top + window.scrollY - headerH;
+    window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
   }, [count]);
 
   const goNext = () => {

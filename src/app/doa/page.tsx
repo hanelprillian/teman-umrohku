@@ -4,7 +4,7 @@ import { DuaCollection } from "@/components/dua-collection";
 import { ArrowLeftIcon } from "@/components/icons";
 import { LinkPending } from "@/components/link-pending";
 
-export const metadata: Metadata = { title: "Kumpulan Doa · Panduan Umroh" };
+export const metadata: Metadata = { title: "Kumpulan Doa · Teman Umrohku" };
 
 export default function DuaPage() {
   return (
@@ -18,7 +18,7 @@ export default function DuaPage() {
           <ArrowLeftIcon className="size-6" />
           <LinkPending />
         </Link>
-        <h1 className="text-2xl font-extrabold">Kumpulan Doa</h1>
+        <h1 className="font-display text-3xl">Kumpulan doa</h1>
       </header>
       <DuaCollection />
     </main>

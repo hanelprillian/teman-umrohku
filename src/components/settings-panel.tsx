@@ -96,7 +96,7 @@ export const SettingsPanel = () => {
   return (
     <div className="space-y-8">
       <section>
-        <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-muted">
+        <h2 className="mb-3 text-sm font-medium text-muted">
           Personalisasi
         </h2>
         <PersonalizationFields
@@ -110,7 +110,7 @@ export const SettingsPanel = () => {
       </section>
 
       <section>
-        <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-muted">
+        <h2 className="mb-3 text-sm font-medium text-muted">
           Ukuran huruf
         </h2>
         <div className="divide-y divide-border rounded-2xl border border-border bg-surface">
@@ -136,7 +136,7 @@ export const SettingsPanel = () => {
       </section>
 
       <section>
-        <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-muted">
+        <h2 className="mb-3 text-sm font-medium text-muted">
           Kerapatan tampilan
         </h2>
         <div className="grid grid-cols-3 gap-2 rounded-2xl border border-border bg-surface p-1.5">
@@ -163,7 +163,7 @@ export const SettingsPanel = () => {
       </section>
 
       <section>
-        <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-muted">
+        <h2 className="mb-3 text-sm font-medium text-muted">
           Tampilan doa
         </h2>
         <div className="divide-y divide-border rounded-2xl border border-border bg-surface">
@@ -186,7 +186,7 @@ export const SettingsPanel = () => {
       </section>
 
       <section>
-        <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-muted">
+        <h2 className="mb-3 text-sm font-medium text-muted">
           Mode tampilan sesi
         </h2>
         <div className="grid grid-cols-2 gap-2 rounded-2xl border border-border bg-surface p-1.5">
@@ -217,7 +217,7 @@ export const SettingsPanel = () => {
       </section>
 
       <section>
-        <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-muted">
+        <h2 className="mb-3 text-sm font-medium text-muted">
           Tema
         </h2>
         <div className="grid grid-cols-3 gap-2 rounded-2xl border border-border bg-surface p-1.5">
@@ -240,7 +240,7 @@ export const SettingsPanel = () => {
       </section>
 
       <section>
-        <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-muted">
+        <h2 className="mb-3 text-sm font-medium text-muted">
           Pratinjau
         </h2>
         <DuaCard dua={rabbanaAtina} />
