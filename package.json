@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && node scripts/generate-sw.mjs",
+    "build": "rm -rf .next && next build && node scripts/generate-sw.mjs",
     "preview": "node scripts/serve.mjs",
     "lint": "eslint"
   },
