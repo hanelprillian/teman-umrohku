@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { sessions as allSessions } from "@/content/sessions";
 import type { Session } from "@/content/types";
 import { useHydrated, useVisibleBelowHeader, useWakeLock } from "@/lib/hooks";
 import { useProgress } from "@/lib/progress-store";
@@ -16,7 +17,7 @@ import {
   useCounterFocus,
 } from "./counter";
 import { ActionButton } from "./action-button";
-import { ArrowLeftIcon, ArrowRightIcon, CheckIcon } from "./icons";
+import { ArrowLeftIcon, ArrowRightIcon, BookIcon, CheckIcon, UndoIcon } from "./icons";
 import { ImmersiveRunner } from "./immersive-runner";
 import { LinkPending } from "./link-pending";
 import { SessionHeader } from "./session-header";
@@ -38,62 +39,128 @@ const Skeleton = () => (
 const CompletedView = ({
   session,
   nextSession,
-  onRepeat,
-}: SessionRunnerProps & { onRepeat: () => void }) => (
-  <main className="mx-auto flex min-h-dvh max-w-xl flex-col items-center justify-center gap-6 px-6 py-10 text-center">
-    <div className="flex size-20 items-center justify-center rounded-full border border-rawdah/25 bg-rawdah-soft text-rawdah">
-      <CheckIcon className="size-9" />
-    </div>
-    <div>
-      <span className="inline-block rounded-full bg-gold-soft px-3 py-1 text-xs font-medium text-gold">
-        Sesi selesai
-      </span>
-      <h1 className="mt-3 text-3xl font-semibold tracking-tight">
-        {session.title}
-      </h1>
-      <p className="mt-2 text-reading text-muted">
-        Alhamdulillah. Semoga Allah menerima ibadahmu.
-      </p>
-    </div>
-    <div className="flex w-full flex-col gap-3">
-      {nextSession ? (
-        <Link
-          href={`/sesi/${nextSession.id}/`}
-          className="relative flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-primary px-5 text-base font-semibold text-primary-foreground shadow-sm"
-        >
-          Lanjut: {nextSession.title}
-          <ArrowRightIcon className="size-5" />
-          <LinkPending />
-        </Link>
-      ) : (
-        <Link
-          href="/"
-          className="relative flex min-h-14 items-center justify-center rounded-2xl bg-primary px-5 text-base font-semibold text-primary-foreground shadow-sm"
-        >
-          Kembali ke beranda
-          <LinkPending />
-        </Link>
-      )}
-      <ActionButton
-        onAction={onRepeat}
-        className="flex min-h-12 items-center justify-center rounded-2xl border border-border bg-surface text-sm font-medium text-muted active:bg-surface-muted"
-      >
-        Ulangi sesi ini
-      </ActionButton>
-      {nextSession && (
-        <Link
-          href="/"
-          className="relative bg-background py-2 text-sm font-medium text-muted underline underline-offset-4"
-        >
-          Ke beranda
-          <LinkPending />
-        </Link>
-      )}
-    </div>
-  </main>
-);
+  hasLaterProgress,
+  onReview,
+  onRepeatThis,
+  onRepeatFromHere,
+}: SessionRunnerProps & {
+  hasLaterProgress: boolean;
+  onReview: () => void;
+  onRepeatThis: () => void;
+  onRepeatFromHere: () => void;
+}) => {
+  const [confirmRepeat, setConfirmRepeat] = useState(false);
 
-const StandardRunner = ({ session }: { session: Session }) => {
+  return (
+    <main className="mx-auto flex min-h-dvh max-w-xl flex-col items-center justify-center gap-6 px-6 py-10 text-center">
+      <div className="flex size-20 items-center justify-center rounded-full border border-rawdah/25 bg-rawdah-soft text-rawdah">
+        <CheckIcon className="size-9" />
+      </div>
+      <div>
+        <span className="inline-block rounded-full bg-gold-soft px-3 py-1 text-xs font-medium text-gold">
+          Sesi selesai
+        </span>
+        <h1 className="mt-3 text-3xl font-semibold tracking-tight">
+          {session.title}
+        </h1>
+        <p className="mt-2 text-reading text-muted">
+          Alhamdulillah. Semoga Allah menerima ibadahmu.
+        </p>
+      </div>
+      <div className="flex w-full flex-col gap-3">
+        {nextSession ? (
+          <Link
+            href={`/sesi/${nextSession.id}/`}
+            className="relative flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-primary px-5 text-base font-semibold text-primary-foreground shadow-sm"
+          >
+            Lanjut: {nextSession.title}
+            <ArrowRightIcon className="size-5" />
+            <LinkPending />
+          </Link>
+        ) : (
+          <Link
+            href="/"
+            className="relative flex min-h-14 items-center justify-center rounded-2xl bg-primary px-5 text-base font-semibold text-primary-foreground shadow-sm"
+          >
+            Kembali ke beranda
+            <LinkPending />
+          </Link>
+        )}
+
+        <ActionButton
+          onAction={onReview}
+          className="flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-border bg-surface text-sm font-medium text-foreground active:bg-surface-muted"
+        >
+          <BookIcon className="size-4 text-gold" />
+          Lihat lagi (tanpa reset)
+        </ActionButton>
+
+        {confirmRepeat ? (
+          <div className="nusuk-card space-y-2.5 rounded-2xl p-4 text-left">
+            <p className="text-sm font-semibold text-foreground">
+              Sesi setelah {session.title} sudah ada progresnya.
+            </p>
+            <p className="text-xs leading-relaxed text-muted">
+              Pilih mau ulangi sesi ini saja, atau reset dari sini sampai akhir.
+            </p>
+            <div className="flex flex-col gap-2 pt-1">
+              <ActionButton
+                onAction={onRepeatThis}
+                className="flex min-h-11 items-center justify-center rounded-xl border border-border bg-surface-muted/70 px-4 text-sm font-medium text-foreground active:bg-surface-muted"
+              >
+                Ulangi {session.title} saja
+              </ActionButton>
+              <ActionButton
+                onAction={onRepeatFromHere}
+                className="flex min-h-11 items-center justify-center rounded-xl border border-gold/35 bg-gold-soft px-4 text-sm font-medium text-gold active:opacity-85"
+              >
+                Reset dari {session.title} sampai akhir
+              </ActionButton>
+              <button
+                type="button"
+                onClick={() => setConfirmRepeat(false)}
+                className="min-h-10 text-xs font-medium text-muted"
+              >
+                Batal
+              </button>
+            </div>
+          </div>
+        ) : (
+          <ActionButton
+            onAction={() => {
+              if (hasLaterProgress) setConfirmRepeat(true);
+              else onRepeatThis();
+            }}
+            className="flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-border bg-background text-sm font-medium text-muted active:bg-surface-muted"
+          >
+            <UndoIcon className="size-4" />
+            Ulangi sesi ini
+          </ActionButton>
+        )}
+
+        {nextSession && (
+          <Link
+            href="/"
+            className="relative bg-background py-2 text-sm font-medium text-muted underline underline-offset-4"
+          >
+            Ke beranda
+            <LinkPending />
+          </Link>
+        )}
+      </div>
+    </main>
+  );
+};
+
+const StandardRunner = ({
+  session,
+  onComplete,
+  reviewing = false,
+}: {
+  session: Session;
+  onComplete?: () => void;
+  reviewing?: boolean;
+}) => {
   const progress = useProgress((s) => s.sessions[session.id]);
   const setStep = useProgress((s) => s.setStep);
   const setCount = useProgress((s) => s.setCount);
@@ -129,8 +196,10 @@ const StandardRunner = ({ session }: { session: Session }) => {
   }, [count]);
 
   const goNext = () => {
-    if (isLastStep) completeSession(session.id);
-    else setStep(session.id, stepIndex + 1);
+    if (isLastStep) {
+      if (onComplete) onComplete();
+      else completeSession(session.id);
+    } else setStep(session.id, stepIndex + 1);
   };
 
   const goBack = () => setStep(session.id, Math.max(0, stepIndex - 1));
@@ -227,7 +296,11 @@ const StandardRunner = ({ session }: { session: Session }) => {
                 onAction={goNext}
                 className="flex min-h-16 flex-1 items-center justify-center gap-2 rounded-2xl bg-primary px-4 text-lg font-bold text-primary-foreground active:bg-primary-strong"
               >
-                {isLastStep ? "Selesai sesi" : "Lanjut"}
+                {isLastStep
+                  ? reviewing
+                    ? "Selesai baca ulang"
+                    : "Selesai sesi"
+                  : "Lanjut"}
                 {isLastStep ? (
                   <CheckIcon className="size-5" />
                 ) : (
@@ -257,26 +330,51 @@ const StandardRunner = ({ session }: { session: Session }) => {
 export const SessionRunner = ({ session, nextSession }: SessionRunnerProps) => {
   const hydrated = useHydrated();
   const immersive = useSettings((s) => s.immersive);
-  const completed = useProgress((s) => s.sessions[session.id]?.completed);
+  const allProgress = useProgress((s) => s.sessions);
+  const completed = allProgress[session.id]?.completed;
+  const setStep = useProgress((s) => s.setStep);
   const resetSession = useProgress((s) => s.resetSession);
+  const resetFromSession = useProgress((s) => s.resetFromSession);
+  const [reviewing, setReviewing] = useState(false);
 
   useWakeLock(hydrated);
 
   if (!hydrated) return <Skeleton />;
 
-  if (completed) {
+  const sessionIdx = allSessions.findIndex((s) => s.id === session.id);
+  const hasLaterProgress =
+    sessionIdx !== -1 &&
+    allSessions.slice(sessionIdx + 1).some((s) => Boolean(allProgress[s.id]));
+
+  if (completed && !reviewing) {
     return (
       <CompletedView
         session={session}
         nextSession={nextSession}
-        onRepeat={() => resetSession(session.id)}
+        hasLaterProgress={hasLaterProgress}
+        onReview={() => {
+          setStep(session.id, 0, 0);
+          setReviewing(true);
+        }}
+        onRepeatThis={() => resetSession(session.id)}
+        onRepeatFromHere={() => resetFromSession(session.id)}
       />
     );
   }
 
+  const finishReview = reviewing ? () => setReviewing(false) : undefined;
+
   return immersive ? (
-    <ImmersiveRunner session={session} />
+    <ImmersiveRunner
+      session={session}
+      reviewing={reviewing}
+      onComplete={finishReview}
+    />
   ) : (
-    <StandardRunner session={session} />
+    <StandardRunner
+      session={session}
+      reviewing={reviewing}
+      onComplete={finishReview}
+    />
   );
 };

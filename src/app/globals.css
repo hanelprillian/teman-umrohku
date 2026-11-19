@@ -22,9 +22,9 @@
   --primary-soft: #efede6;
   --primary-foreground: #faf9f5;
 
-  /* Rawdah Emerald (strictly for completed / shahih verification) */
-  --rawdah: #1c6b4f;
-  --rawdah-soft: #e6f3ed;
+  /* Completed / verified tone aligned with Nusuk gold */
+  --rawdah: #9c7e2c;
+  --rawdah-soft: #f6f0df;
 
   /* Semantic accents */
   --accent: #9c7e2c;
@@ -60,8 +60,8 @@
   --primary-soft: #241f14;
   --primary-foreground: #13110c;
 
-  --rawdah: #4cc395;
-  --rawdah-soft: #12261e;
+  --rawdah: #d4b55f;
+  --rawdah-soft: #252014;
 
   --accent: #d4b55f;
   --accent-soft: #252014;
@@ -131,22 +131,24 @@ a {
   touch-action: manipulation;
 }
 
-/* Nusuk-inspired Kiswah obsidian surface with whisper-thin geometric lattice & Noor glow */
-.nusuk-kiswah {
-  position: relative;
-  background-color: var(--kiswah);
-  color: var(--kiswah-fg);
-  background-image:
-    radial-gradient(circle at 90% 8%, rgba(212, 181, 95, 0.22) 0%, rgba(212, 181, 95, 0) 56%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64' fill='none'%3E%3Cpath d='M32 6L39.5 24.5L58 32L39.5 39.5L32 58L24.5 39.5L6 32L24.5 24.5L32 6Z' stroke='%23d4b55f' stroke-opacity='0.08' stroke-width='1'/%3E%3Crect x='22' y='22' width='20' height='20' transform='rotate(45 32 32)' stroke='%23d4b55f' stroke-opacity='0.06' stroke-width='1'/%3E%3C/svg%3E");
-  border: 1px solid rgba(212, 181, 95, 0.24);
-}
+@layer components {
+  /* Nusuk-inspired Kiswah obsidian surface with whisper-thin geometric lattice & Noor glow */
+  .nusuk-kiswah {
+    position: relative;
+    background-color: var(--kiswah);
+    color: var(--kiswah-fg);
+    background-image:
+      radial-gradient(circle at 90% 8%, rgba(212, 181, 95, 0.22) 0%, rgba(212, 181, 95, 0) 56%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64' fill='none'%3E%3Cpath d='M32 6L39.5 24.5L58 32L39.5 39.5L32 58L24.5 39.5L6 32L24.5 24.5L32 6Z' stroke='%23d4b55f' stroke-opacity='0.08' stroke-width='1'/%3E%3Crect x='22' y='22' width='20' height='20' transform='rotate(45 32 32)' stroke='%23d4b55f' stroke-opacity='0.06' stroke-width='1'/%3E%3C/svg%3E");
+    border: 1px solid rgba(212, 181, 95, 0.24);
+  }
 
-/* Subtle architectural card elevation */
-.nusuk-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  box-shadow: 0 1px 2px rgba(20, 20, 18, 0.03);
+  /* Subtle architectural card elevation */
+  .nusuk-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: 0 1px 2px rgba(20, 20, 18, 0.03);
+  }
 }
 
 [data-theme="dark"] .nusuk-card {
@@ -264,8 +266,49 @@ details > summary::-webkit-details-marker {
   animation: fade-in 150ms ease 100ms forwards;
 }
 
+/* Splash screen is shown immediately from frame 1 only when inline script sets data-splash="1". */
+.splash-screen {
+  display: none;
+}
+
+html[data-splash="1"] .splash-screen {
+  display: flex;
+}
+
+@keyframes splash-glow {
+  from {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+@keyframes splash-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.splash-glow {
+  animation: splash-glow 950ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.splash-rise {
+  animation: splash-rise 700ms cubic-bezier(0.22, 1, 0.36, 1) 120ms both;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .animate-pop {
+  .animate-pop,
+  .splash-glow,
+  .splash-rise {
     animation: none;
   }
 }

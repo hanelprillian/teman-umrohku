@@ -13,6 +13,7 @@ export const DENSITY_SCALE: Record<Density, number> = {
 };
 
 export const SETTINGS_STORAGE_KEY = "pu-settings";
+export const SPLASH_SESSION_KEY = "pu-splash-shown";
 export const FONT_SCALES = [0.85, 1, 1.15, 1.3, 1.5] as const;
 export const ARABIC_SCALES = [0.85, 1, 1.2, 1.4, 1.6, 1.8] as const;
 
@@ -36,6 +37,7 @@ interface SettingsState {
   hand: Hand;
   scrollLock: boolean;
   autoFocusCounter: boolean;
+  showSplash: boolean;
   onboarded: boolean;
   setTheme: (theme: Theme) => void;
   setDensity: (density: Density) => void;
@@ -43,6 +45,7 @@ interface SettingsState {
   setHand: (hand: Hand) => void;
   setScrollLock: (scrollLock: boolean) => void;
   setAutoFocusCounter: (autoFocusCounter: boolean) => void;
+  setShowSplash: (showSplash: boolean) => void;
   setOnboarded: (onboarded: boolean) => void;
   setPersonalization: (
     values: Partial<
@@ -72,6 +75,7 @@ export const useSettings = create<SettingsState>()(
       hand: "right",
       scrollLock: false,
       autoFocusCounter: false,
+      showSplash: true,
       onboarded: false,
       setTheme: (theme) => set({ theme }),
       setDensity: (density) => set({ density }),
@@ -79,6 +83,7 @@ export const useSettings = create<SettingsState>()(
       setHand: (hand) => set({ hand }),
       setScrollLock: (scrollLock) => set({ scrollLock }),
       setAutoFocusCounter: (autoFocusCounter) => set({ autoFocusCounter }),
+      setShowSplash: (showSplash) => set({ showSplash }),
       setOnboarded: (onboarded) => set({ onboarded }),
       setPersonalization: (values) => set(values),
       setFontScale: (fontScale) => set({ fontScale }),
@@ -90,10 +95,11 @@ export const useSettings = create<SettingsState>()(
     }),
     {
       name: SETTINGS_STORAGE_KEY,
-      version: 1,
+      version: 2,
       migrate: (persisted, version) => {
         const state = persisted as Partial<SettingsState>;
         if (version < 1) state.arabicScale = state.fontScale ?? 1;
+        if (version < 2 && state.showSplash === undefined) state.showSplash = true;
         return state as SettingsState;
       },
     },
@@ -101,7 +107,7 @@ export const useSettings = create<SettingsState>()(
 );
 
 // Must stay in sync with applySettingsToDocument: runs before hydration to avoid a flash.
-export const settingsInlineScript = `(function(){try{var s=(JSON.parse(localStorage.getItem("${SETTINGS_STORAGE_KEY}"))||{}).state||{};var d=document.documentElement;var t=s.theme||"system";if(t==="system")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";d.setAttribute("data-theme",t);d.style.setProperty("--font-scale",String(s.fontScale||1));d.style.setProperty("--arabic-scale",String(s.arabicScale||s.fontScale||1));d.style.setProperty("--density",String(${JSON.stringify(DENSITY_SCALE)}[s.density]||1));if(s.showLatin===false)d.setAttribute("data-hide-latin","");if(s.showTranslation===false)d.setAttribute("data-hide-translation","");if(s.showDalil!==true)d.setAttribute("data-hide-dalil","");if(s.gender==="pria"||s.gender==="wanita")d.setAttribute("data-gender",s.gender)}catch(e){}})()`;
+export const settingsInlineScript = `(function(){try{var s=(JSON.parse(localStorage.getItem("${SETTINGS_STORAGE_KEY}"))||{}).state||{};var d=document.documentElement;var t=s.theme||"system";if(t==="system")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";d.setAttribute("data-theme",t);d.style.setProperty("--font-scale",String(s.fontScale||1));d.style.setProperty("--arabic-scale",String(s.arabicScale||s.fontScale||1));d.style.setProperty("--density",String(${JSON.stringify(DENSITY_SCALE)}[s.density]||1));if(s.showLatin===false)d.setAttribute("data-hide-latin","");if(s.showTranslation===false)d.setAttribute("data-hide-translation","");if(s.showDalil!==true)d.setAttribute("data-hide-dalil","");if(s.gender==="pria"||s.gender==="wanita")d.setAttribute("data-gender",s.gender);if(s.showSplash!==false&&!sessionStorage.getItem("${SPLASH_SESSION_KEY}"))d.setAttribute("data-splash","1")}catch(e){}})()`;
 
 export const resolveTheme = (theme: Theme): "light" | "dark" => {
   if (theme !== "system") return theme;

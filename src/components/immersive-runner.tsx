@@ -108,6 +108,7 @@ const DuaSlideContent = ({ slide }: { slide: Slide & { dua: Dua } }) => {
 interface SlideEndProps {
   nextSlide?: Slide;
   gatedBy?: Step;
+  reviewing?: boolean;
   onNext: () => void;
   onComplete: () => void;
 }
@@ -115,6 +116,7 @@ interface SlideEndProps {
 const SlideEnd = ({
   nextSlide,
   gatedBy,
+  reviewing = false,
   onNext,
   onComplete,
 }: SlideEndProps) => {
@@ -150,12 +152,21 @@ const SlideEnd = ({
       onAction={onComplete}
       className="mt-6 flex min-h-16 w-full items-center justify-center gap-2 rounded-2xl bg-primary px-4 text-lg font-bold text-primary-foreground active:bg-primary-strong"
     >
-      Selesai sesi <CheckIcon className="size-5" />
+      {reviewing ? "Selesai baca ulang" : "Selesai sesi"}{" "}
+      <CheckIcon className="size-5" />
     </ActionButton>
   );
 };
 
-export const ImmersiveRunner = ({ session }: { session: Session }) => {
+export const ImmersiveRunner = ({
+  session,
+  reviewing = false,
+  onComplete,
+}: {
+  session: Session;
+  reviewing?: boolean;
+  onComplete?: () => void;
+}) => {
   const progress = useProgress((s) => s.sessions[session.id]);
   const setStep = useProgress((s) => s.setStep);
   const setCount = useProgress((s) => s.setCount);
@@ -348,8 +359,11 @@ export const ImmersiveRunner = ({ session }: { session: Session }) => {
                 <SlideEnd
                   nextSlide={slides[position + 1]}
                   gatedBy={gatedBy}
+                  reviewing={reviewing}
                   onNext={() => goTo(position + 1)}
-                  onComplete={() => completeSession(session.id)}
+                  onComplete={() =>
+                    onComplete ? onComplete() : completeSession(session.id)
+                  }
                 />
               </div>
             </section>

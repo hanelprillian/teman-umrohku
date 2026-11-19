@@ -6,6 +6,7 @@ import {
 } from "next/font/google";
 import { ServiceWorkerRegister } from "@/components/service-worker-register";
 import { SettingsSync } from "@/components/settings-sync";
+import { SplashScreen } from "@/components/splash-screen";
 import { settingsInlineScript } from "@/lib/settings-store";
 import "./globals.css";
 
@@ -62,6 +63,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <script dangerouslySetInnerHTML={{ __html: settingsInlineScript }} />
       </head>
       <body className="min-h-full bg-background font-sans text-foreground">
+        <SplashScreen />
         {children}
         <SettingsSync />
         <ServiceWorkerRegister />

@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { sessions as allSessions } from "@/content/sessions";
 import type { SessionId } from "@/content/types";
 
 export interface SessionProgress {
@@ -15,10 +16,15 @@ export interface SessionProgress {
 interface ProgressState {
   sessions: Partial<Record<SessionId, SessionProgress>>;
   lastSessionId?: SessionId;
-  setStep: (sessionId: SessionId, stepIndex: number, slideIndex?: number) => void;
+  setStep: (
+    sessionId: SessionId,
+    stepIndex: number,
+    slideIndex?: number,
+  ) => void;
   setCount: (sessionId: SessionId, stepId: string, count: number) => void;
   completeSession: (sessionId: SessionId) => void;
   resetSession: (sessionId: SessionId) => void;
+  resetFromSession: (sessionId: SessionId) => void;
   resetAll: () => void;
 }
 
@@ -77,8 +83,21 @@ export const useProgress = create<ProgressState>()(
         })),
       resetSession: (sessionId) =>
         set((state) => ({
+          lastSessionId: sessionId,
           sessions: { ...state.sessions, [sessionId]: emptyProgress },
         })),
+      resetFromSession: (sessionId) =>
+        set((state) => {
+          const startIndex = allSessions.findIndex((s) => s.id === sessionId);
+          const next = { ...state.sessions };
+          if (startIndex !== -1) {
+            for (const s of allSessions.slice(startIndex + 1)) {
+              delete next[s.id];
+            }
+          }
+          next[sessionId] = emptyProgress;
+          return { lastSessionId: sessionId, sessions: next };
+        }),
       resetAll: () => set({ sessions: {}, lastSessionId: undefined }),
     }),
     { name: "pu-progress" },

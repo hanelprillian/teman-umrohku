@@ -1,17 +1,20 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { sessions } from "@/content/sessions";
 import type { SessionId } from "@/content/types";
 import { useHydrated } from "@/lib/hooks";
 import { useProgress } from "@/lib/progress-store";
-import { ArrowRightIcon, CheckIcon } from "./icons";
+import { ArrowRightIcon, CheckIcon, UndoIcon } from "./icons";
 import { LinkPending } from "./link-pending";
 
 export const ContinueCard = () => {
   const hydrated = useHydrated();
   const progress = useProgress((s) => s.sessions);
   const lastSessionId = useProgress((s) => s.lastSessionId);
+  const resetAll = useProgress((s) => s.resetAll);
+  const [confirmNew, setConfirmNew] = useState(false);
 
   if (!hydrated) {
     return (
@@ -41,6 +44,44 @@ export const ContinueCard = () => {
         <p className="mt-1.5 text-sm text-kiswah-muted">
           Semoga Allah menerima ibadahmu dan menjadikannya umroh yang mabrur.
         </p>
+
+        <div className="mt-5 border-t border-white/10 pt-4">
+          {confirmNew ? (
+            <div className="space-y-2.5">
+              <p className="text-xs text-kiswah-muted">
+                Reset semua 6 sesi dan mulai hitungan umroh baru dari awal?
+              </p>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    resetAll();
+                    setConfirmNew(false);
+                  }}
+                  className="flex min-h-10 flex-1 items-center justify-center rounded-xl bg-gold-bright px-3 text-xs font-semibold text-[#14130f]"
+                >
+                  Ya, mulai baru
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setConfirmNew(false)}
+                  className="flex min-h-10 items-center justify-center rounded-xl border border-white/15 bg-white/5 px-4 text-xs font-medium text-kiswah-fg"
+                >
+                  Batal
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setConfirmNew(true)}
+              className="flex min-h-10 items-center gap-2 rounded-xl border border-white/15 bg-white/6 px-3.5 text-xs font-medium text-kiswah-fg transition-colors active:bg-white/12"
+            >
+              <UndoIcon className="size-4 text-gold-bright" />
+              Mulai umroh baru
+            </button>
+          )}
+        </div>
       </div>
     );
   }
@@ -106,7 +147,7 @@ export const SessionMarker = ({
 
   if (hydrated && progress?.completed) {
     return (
-      <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-rawdah-soft text-rawdah">
+      <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-gold-bright text-[#14130f]">
         <CheckIcon className="size-4" />
       </span>
     );
@@ -114,7 +155,7 @@ export const SessionMarker = ({
 
   if (hydrated && progress) {
     return (
-      <span className="flex size-9 shrink-0 items-center justify-center rounded-full border border-gold/50 bg-gold-soft text-sm font-semibold tabular-nums text-gold">
+      <span className="flex size-9 shrink-0 items-center justify-center rounded-full border-2 border-gold bg-gold-soft text-sm font-semibold tabular-nums text-gold">
         {index + 1}
       </span>
     );
@@ -135,14 +176,14 @@ export const SessionStatus = ({ id }: { id: SessionId }) => {
 
   if (progress.completed) {
     return (
-      <span className="rounded-full bg-rawdah-soft px-2.5 py-0.5 text-xs font-medium text-rawdah">
+      <span className="rounded-full border border-border bg-surface-muted px-2.5 py-0.5 text-xs font-medium text-foreground">
         Selesai
       </span>
     );
   }
 
   return (
-    <span className="rounded-full bg-gold-soft px-2.5 py-0.5 text-xs font-medium text-gold">
+    <span className="rounded-full border border-gold/30 bg-gold-soft px-2.5 py-0.5 text-xs font-medium text-gold">
       Berjalan
     </span>
   );

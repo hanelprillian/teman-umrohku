@@ -237,6 +237,14 @@ export const SettingsPanel = () => {
             </button>
           ))}
         </div>
+        <div className="mt-3 rounded-2xl border border-border bg-surface">
+          <Toggle
+            label="Layar pembuka (splash screen)"
+            description="Animasi singkat saat pertama kali membuka aplikasi."
+            checked={settings.showSplash}
+            onChange={settings.setShowSplash}
+          />
+        </div>
       </section>
 
       <section>

@@ -7,11 +7,11 @@ const statusStyles: Record<DalilStatus, { label: string; className: string }> = 
   },
   shahih: {
     label: "Shahih",
-    className: "bg-rawdah-soft text-rawdah",
+    className: "border border-gold/30 bg-gold-soft text-gold",
   },
   hasan: {
     label: "Hasan",
-    className: "bg-rawdah-soft text-rawdah",
+    className: "border border-border bg-surface-muted text-foreground",
   },
   atsar: {
     label: "Atsar Sahabat",
