@@ -25,6 +25,14 @@ Ikon di-generate dari `scripts/generate-icons.mjs` (`node scripts/generate-icons
 
 Deploy folder `out/` ke hosting statis ber-HTTPS (Vercel, Cloudflare Pages, Netlify), buka di Safari → Share → **Add to Home Screen**.
 
+## React Native (offline native)
+
+Branch `rn/teman-umrohku` → folder [`mobile/`](./mobile/) (Expo). Konten & store sama dengan web; app native supaya tetap bisa dibuka saat jaringan jelek (tanpa mengandalkan A2HS/PWA).
+
+```bash
+cd mobile && npm install && npm start
+```
+
 ## Catatan konten
 
 Konten masih perlu ditinjau ustadz/pembimbing sebelum dipakai. Setiap doa diberi label status dalil: Al-Qur'an, Shahih, Hasan, Atsar Sahabat, atau Diperselisihkan.
